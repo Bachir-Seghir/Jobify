@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/userContext";
@@ -5,38 +6,50 @@ import { UserContext } from "../contexts/userContext";
 function SigninPage() {
   const emailRef = useRef();
   const passwordRef = useRef();
+  const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState(null);
 
   const navigate = useNavigate();
 
-  // context
-  const { setIsAuth, setToken } = useContext(UserContext);
+  // Context API
+  const { setIsAuth, setJwt } = useContext(UserContext);
 
+  // this async function handles the login POST Request :
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsAuth(true);
-    navigate("/");
-
-    /*     const res = await login({
-      variables: {
-        email: emailRef.current.value,
+    setLoading(true);
+    axios
+      .post("http://localhost:1337/auth/local", {
+        identifier: emailRef.current.value,
         password: passwordRef.current.value,
-      },
-    })
+      })
       .then((res) => {
-        localStorage.setItem("token", res?.data.login.jwt);
+        // set the Authenticated status to true
         setIsAuth(true);
-        setToken(res.data.login.jwt);
+        // store the JWT token on the state & localStorage
+        setJwt(res.data.jwt);
+        localStorage.setItem("token", res.data.jwt);
+        setLoading(false);
         navigate("/");
       })
-      .catch((err) => setLoginErr(err)); */
+      .catch((err) => {
+        setLoginError(err);
+        setLoading(false);
+      });
   };
 
-  if (false)
+  //loading spinner
+  if (loading)
     return (
-      <div className="w-screen h-screen flex items-center justify-center">
+      <div className="w-screen h-screen flex flex-col items-center justify-center">
+        <img
+          className="block z-index-2 h-12 w-auto mb-4"
+          src="https://drive.google.com/uc?export=view&id=1UsbTcP9u-KK7lJYDjSD3HgcuWiP5laLF"
+          alt="Workflow"
+        />
         <svg
           role="status"
-          className="mr-2 w-12 h-12 text-gray-300 animate-spin fill-sky-600"
+          className="mr-2 w-16 h-16 text-gray-300 animate-spin fill-sky-600"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +81,11 @@ function SigninPage() {
               <h2 className="mt-6 text-3xl font-extrabold text-slate-700">
                 Sign in
               </h2>
-              {/* {error && <h4 className="text-red-500 mt-4">{error.message}</h4>} */}
+              {loginError && (
+                <h4 className="text-red-500 mt-4">
+                  Invalid Credentials, check your Email or Password
+                </h4>
+              )}
             </div>
 
             <div className="mt-8">
@@ -76,7 +93,7 @@ function SigninPage() {
                 <form method="POST" onSubmit={handleSubmit}>
                   <fieldset
                     disabled={false}
-                    className={`space-y-6 ${false && "opacity-30"}`}
+                    className={`space-y-6 ${loading && "opacity-30"}`}
                   >
                     <div>
                       <label

@@ -11,14 +11,22 @@ const menuLinks = [
   { name: "Home", path: "/" },
   { name: "Jobs", path: "/jobs" },
   { name: "Condidates", path: "/condidates" },
-  { name: "Employers", path: "/employers" },
-  { name: "Blog", path: "/blog" },
-  { name: "Contact", path: "/contact" },
+  //{ name: "Employers", path: "/employers" },
+  //{ name: "Blog", path: "/blog" },
+  //{ name: "Contact", path: "/contact" },
 ];
 export default function Navbar() {
-  const { user, setIsAuth } = useContext(UserContext);
+  const { user, setIsAuth, setJwt } = useContext(UserContext);
   const location = useLocation();
   const path = location.pathname;
+
+  const handleSignout = (e) => {
+    e.preventDefault();
+    setIsAuth(false);
+    localStorage.setItem("token", "");
+    setJwt("");
+  };
+
   return (
     <Disclosure as="nav" className="bg-white shadow fixed w-full z-10">
       {({ open }) => (
@@ -130,7 +138,7 @@ export default function Navbar() {
                       <Menu.Item>
                         {({ active }) => (
                           <button
-                            onClick={() => setIsAuth(false)}
+                            onClick={handleSignout}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700 w-full text-left"

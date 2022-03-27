@@ -1,54 +1,46 @@
+import axios from "axios";
 import React, { useState, createContext, useEffect } from "react";
 
 export const UserContext = createContext();
 
-/* const CURRENT_USER = gql`
-  query CURRENT_USER {
-    me {
-      email
-      avatar
-      username
-      firstName
-      lastName
-      phone
-      address
-      birthday
-      available
-      age
-      role {
-        name
-      }
-    }
-  }
-`; */
-
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
-  const [token, setToken] = useState("");
-  //const [currentUser, { data }] = useLazyQuery(CURRENT_USER);
+  const [jwt, setJwt] = useState("");
 
+  // on Page load this effect check if there is token on the localStorage
+  // if true it save it to the UserContext State
   useEffect(() => {
-    const jwt = localStorage.getItem("token");
-    jwt && setIsAuth(true) && setToken(jwt);
+    const token = localStorage.getItem("token");
+    token && setJwt(token);
   }, []);
 
+  // this effect execute me() query when the jwt state is changed and set Auth status to True
+  // jwt state can be changed in 2 cases :
+  // By signin function || from localStorage in case of refresh page
+  useEffect(() => {
+    jwt && me() && setIsAuth(true);
+  }, [jwt]);
+
+  const me = async () => {
+    const { data } = await axios.get("http://localhost:1337/users/me", {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    setUser(data);
+  };
+
+  // This effect act as a Sign out function : if the Auth status is false it set user to null
   useEffect(() => {
     if (!isAuth) {
       setUser(null);
-    } else {
-      setUser({ username: "test" });
-      //currentUser();
-      //data?.me && setUser(data.me);
     }
-  }, [
-    isAuth,
-    //currentUser,
-    // data
-  ]);
+  }, [isAuth]);
+
   return (
     <UserContext.Provider
-      value={{ user, setUser, isAuth, setIsAuth, token, setToken }}
+      value={{ user, setUser, isAuth, setIsAuth, jwt, setJwt }}
     >
       {children}
     </UserContext.Provider>
