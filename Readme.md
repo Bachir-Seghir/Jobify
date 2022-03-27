@@ -16,13 +16,13 @@ condidates can register for free , and there is a pricing plans for Employers
 First of all, clone the repository into your machine :
 
 ```sh
-git clone https://github.com/Bachir-Seghir/Jobify.git`
+git clone https://github.com/Bachir-Seghir/Jobify.git
 ```
 
 In the project directory install all dependencies,run:
 
 ```sh
-npm install`
+npm install
 ```
 
 In the project directory, start the server : 
@@ -42,7 +42,7 @@ You may also see any lint errors in the console.
 npm run build
 ```
 
-Builds the app for production to the ```sh build ``` folder.\
+Builds the app for production to the ``` build ``` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 
