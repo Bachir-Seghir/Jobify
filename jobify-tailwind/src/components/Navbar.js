@@ -1,7 +1,8 @@
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Link, useLocation } from "react-router-dom";
+import { UserContext } from "../contexts/userContext";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -15,9 +16,9 @@ const menuLinks = [
   { name: "Contact", path: "/contact" },
 ];
 export default function Navbar() {
+  const { user, setIsAuth } = useContext(UserContext);
   const location = useLocation();
   const path = location.pathname;
-  const user = false;
   return (
     <Disclosure as="nav" className="bg-white shadow fixed w-full z-10">
       {({ open }) => (
@@ -73,13 +74,25 @@ export default function Navbar() {
                 <Menu as="div" className="ml-3 relative">
                   {user ? (
                     <div>
-                      <Menu.Button className="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
+                      <Menu.Button className="bg-white  flex text-sm focus:outline-none focus:ring-0 items-center">
                         <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          className="h-10 w-10 rounded-full shadow object-contain"
+                          src={
+                            user.avatar ||
+                            "https://fromlittlethings.com/wp-content/plugins/wp-social-reviews/assets/images/template/review-template/placeholder-image.png"
+                          }
                           alt=""
                         />
+                        <h4
+                          to="/profile"
+                          className="border-transparent text-gray-700 hover:border-sky-600 hover:text-sky-60 inline-flex items-center px-2   text-sm font-medium "
+                        >
+                          Hello{", "}
+                          <span className="ml-1 text-sky-600 capitalize">
+                            {user.username}
+                          </span>
+                        </h4>
                       </Menu.Button>
                     </div>
                   ) : (
@@ -102,41 +115,29 @@ export default function Navbar() {
                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="#"
+                          <Link
+                            to="#"
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
                             Your Profile
-                          </a>
+                          </Link>
                         )}
                       </Menu.Item>
+
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="#"
+                          <button
+                            onClick={() => setIsAuth(false)}
                             className={classNames(
                               active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            Settings
-                          </a>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
+                              "block px-4 py-2 text-sm text-gray-700 w-full text-left"
                             )}
                           >
                             Sign out
-                          </a>
+                          </button>
                         )}
                       </Menu.Item>
                     </Menu.Items>
