@@ -7,7 +7,7 @@ and it is a job board inspired from many websites such as linkedIn , RemoteOk...
 
 In this app we used Tailwind css as a utility-first CSS framework for rapidly building custom user interfaces.
 
-Jobify App is consisted to host two type of subscribers , Condidates & Employers
+Jobify App is consisted to host two types of subscribers , Condidates & Employers
 condidates can register for free , and there is a pricing plans for Employers
 
 
