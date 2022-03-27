@@ -11,6 +11,7 @@ Jobify App is consisted to host two types of subscribers , Condidates & Employer
 condidates can register for free , and there is a pricing plans for Employers
 
 
+
 ## Installaiom
 
 First of all, clone the repository into your machine :
