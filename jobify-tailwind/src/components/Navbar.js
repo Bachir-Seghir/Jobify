@@ -3,6 +3,7 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Link, useLocation } from "react-router-dom";
 import { UserContext } from "../contexts/userContext";
+import { CheckIcon } from "@heroicons/react/solid";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -50,14 +51,14 @@ export default function Navbar() {
                     <img
                       className="block lg:hidden h-8 w-auto"
                       src="https://drive.google.com/uc?export=view&id=1UsbTcP9u-KK7lJYDjSD3HgcuWiP5laLF"
-                      alt="Jobify logo"
+                      alt="Jobify Logo"
                     />
                   </Link>
                   <Link to="/">
                     <img
                       className="hidden lg:block h-10 w-auto"
                       src="https://drive.google.com/uc?export=view&id=1UsbTcP9u-KK7lJYDjSD3HgcuWiP5laLF"
-                      alt="Workflow"
+                      alt="Jobify Logo"
                     />
                   </Link>
                 </div>
@@ -97,19 +98,38 @@ export default function Navbar() {
                           className="border-transparent text-gray-700 hover:border-sky-600 hover:text-sky-60 inline-flex items-center px-2   text-sm font-medium "
                         >
                           Hello{", "}
-                          <span className="ml-1 text-sky-600 capitalize">
-                            {user.username}
-                          </span>
+                          {user.accountType === "employer" ? (
+                            <span className="ml-1 text-sky-600 capitalize flex items-center">
+                              {user.username}
+                              {user.subscribed ? (
+                                <CheckIcon className="flex-shrink-0 h-5 w-5 text-green-500 ml-1" />
+                              ) : (
+                                <XIcon className="flex-shrink-0 h-5 w-5 text-red-500 ml-1" />
+                              )}
+                            </span>
+                          ) : (
+                            <span className="ml-1 text-sky-600 capitalize flex items-center">
+                              {user.username}
+                            </span>
+                          )}
                         </h4>
                       </Menu.Button>
                     </div>
                   ) : (
-                    <Link
-                      to="/signin"
-                      className="text-sm font-medium px-4 py-2 border border-sky-600 rounded-sm text-sky-600 bg-transparent hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-600 lg:w-[100px]"
-                    >
-                      Sign in
-                    </Link>
+                    <>
+                      <Link
+                        to="/signin"
+                        className="text-sm font-medium px-4 py-2 border border-sky-600 rounded-sm text-sky-600 bg-transparent hover:bg-sky-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-600 lg:w-[100px]"
+                      >
+                        Sign in
+                      </Link>
+                      <Link
+                        to="/register?mode=condidate"
+                        className="text-sm font-medium px-4 py-2 ml-2 text-orange-600 bg-transparent focus:outline-none hover:text-slate-600 lg:w-[100px]"
+                      >
+                        Join Now
+                      </Link>
+                    </>
                   )}
                   <Transition
                     as={Fragment}

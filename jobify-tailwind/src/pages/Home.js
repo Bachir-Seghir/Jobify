@@ -1,4 +1,5 @@
 import BlogFeed from "../components/BlogFeed";
+import Faqs from "../components/Faqs";
 import Hero from "../components/Hero";
 import Pricing from "../components/Pricing";
 import Statistics from "../components/Statistics";
@@ -12,6 +13,7 @@ const Home = () => {
       <Pricing />
       <BlogFeed />
       <Testimonials />
+      <Faqs />
     </div>
   );
 };

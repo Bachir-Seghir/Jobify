@@ -18,6 +18,7 @@ function Hero() {
         <img
           className="w-full hidden md:block"
           src="https://drive.google.com/uc?export=view&id=10NzLSLOerNY1hnIoukfZjpg-EiHk_GRK"
+          alt="Hero illustration , Jobify Header"
         />
       </div>
     </main>

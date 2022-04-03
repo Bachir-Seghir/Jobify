@@ -1,5 +1,5 @@
-import React, { useContext, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useHistory, useLocation, useNavigate } from "react-router-dom";
 import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import { UserContext } from "../contexts/userContext";
@@ -22,29 +22,41 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const charLengthCheck = (char, length) => {
+  return char.length >= length;
+};
+/* const emailCheck = (email) => {
+  const pattern =
+    /[a-zA-Z0-9]+[\.]?([a-zA-Z0-9]+)?[\@][a-z]{3,9}[\.][a-z]{2,5}/g;
+  return pattern.test(email);
+}; */
 function RegisterPage() {
-  const [selectedMode, setSelectedMode] = useState(modes[0].type);
+  const location = useLocation();
+  const search = location.search;
+  const mode = new URLSearchParams(search).get("mode");
+
+  const [selectedMode, setSelectedMode] = useState(mode);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState(null);
 
-  const usernameRef = useRef();
-  const emailRef = useRef();
-  const passwordRef = useRef();
-
   const navigate = useNavigate();
-
   // Context API
-  const { setIsAuth, setJwt } = useContext(UserContext);
+  const { setIsAuth, setJwt, user } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     axios
       .post("http://localhost:1337/auth/local/register", {
-        email: emailRef.current.value,
-        username: usernameRef.current.value,
-        password: passwordRef.current.value,
+        email,
+        username,
+        password,
         accountType: selectedMode,
+        subscribed: selectedMode === "condidate",
       })
       .then((res) => {
         // set the Authenticated status to true
@@ -54,13 +66,26 @@ function RegisterPage() {
         localStorage.setItem("token", res.data.jwt);
 
         setLoading(false);
-        navigate("/");
+        selectedMode === "condidate"
+          ? navigate("/")
+          : navigate("/membership", {
+              state: { username, email, password },
+            });
       })
       .catch((err) => {
         setLoginError(err);
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (
+      user?.accountType === "condidate" ||
+      (user?.accountType === "employer" && user?.subscribed)
+    ) {
+      navigate("/");
+    }
+  }, [user]);
 
   //loading spinner
   if (loading)
@@ -185,10 +210,16 @@ function RegisterPage() {
                         id="username"
                         name="username"
                         type="text"
-                        ref={usernameRef}
                         autoComplete="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sky-600 focus:border-sky-600 sm:text-sm"
+                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sky-600 focus:border-sky-600 sm:text-sm
+                            ${
+                              !charLengthCheck(username, 5) &&
+                              "focus:ring-red-400 focus:border-red-400"
+                            }
+                        `}
                       />
                     </div>
                   </div>
@@ -204,8 +235,9 @@ function RegisterPage() {
                         id="email"
                         name="email"
                         type="email"
-                        ref={emailRef}
                         autoComplete="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                         className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sky-600 focus:border-sky-600 sm:text-sm"
                       />
@@ -223,10 +255,18 @@ function RegisterPage() {
                         id="password"
                         name="password"
                         type="password"
-                        ref={passwordRef}
                         autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sky-600 focus:border-sky-600 sm:text-sm"
+                        className={`appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sky-600 focus:border-sky-600 sm:text-sm
+                           
+                        ${
+                          !charLengthCheck(password, 8) &&
+                          "focus:ring-red-400 focus:border-red-400"
+                        }
+                            
+                          `}
                       />
                     </div>
                   </div>
@@ -236,10 +276,11 @@ function RegisterPage() {
                       type="submit"
                       className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sky-600 hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
                     >
-                      Register Your Account
+                      Register {selectedMode}
                     </button>
                   </div>
                 </form>
+
                 <div className="mt-10 relative">
                   <div
                     className="absolute inset-0 flex items-center"

@@ -1,11 +1,26 @@
+import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import CondidatesPage from "./pages/CondidatesPage";
 import Home from "./pages/Home";
 import JobsPage from "./pages/JobsPage";
+import Membership from "./pages/Membership";
+import OrderPage from "./pages/OrderPage";
 import RegisterPage from "./pages/RegisterPage";
 import SigninPage from "./pages/SigninPage";
+import Success from "./pages/Success";
+
+// This function scrolls to Top page when routing to another page
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 const App = () => {
   const location = useLocation();
@@ -15,16 +30,20 @@ const App = () => {
         <Navbar />
       )}
 
+      <ScrollToTop />
       <Routes>
         <Route path="/signin" element={<SigninPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/membership" element={<Membership />} />
         <Route path="/" element={<Home />} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/condidates" element={<CondidatesPage />} />
+        <Route path="/order" element={<OrderPage />} />
       </Routes>
-      {location.pathname != "/signin" && location.pathname != "/register" && (
-        <Footer />
-      )}
+      {location.pathname != "/signin" &&
+        location.pathname != "/register" &&
+        location.pathname != "/order" && <Footer />}
     </>
   );
 };

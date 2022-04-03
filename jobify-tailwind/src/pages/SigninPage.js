@@ -12,7 +12,7 @@ function SigninPage() {
   const navigate = useNavigate();
 
   // Context API
-  const { setIsAuth, setJwt } = useContext(UserContext);
+  const { setIsAuth, setJwt, user } = useContext(UserContext);
 
   // this async function handles the login POST Request :
   const handleSubmit = async (e) => {
@@ -65,6 +65,9 @@ function SigninPage() {
         </svg>
       </div>
     );
+  // if a signed in user hardcoded the route '/signin' it will routed to '/'
+  user && navigate("/");
+
   return (
     <div>
       <div className="flex h-screen">
@@ -182,7 +185,7 @@ function SigninPage() {
                     <span className="px-2 bg-white text-gray-500">
                       New To Jobify ?
                       <Link
-                        to="/register"
+                        to="/register?mode=condidate"
                         className="font-medium text-sky-600 hover:text-sky-600 ml-2 "
                       >
                         Join Now
