@@ -1,7 +1,7 @@
 import { Fragment, useContext } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/userContext";
 import { CheckIcon } from "@heroicons/react/solid";
 
@@ -20,12 +20,13 @@ export default function Navbar() {
   const { user, setIsAuth, setJwt } = useContext(UserContext);
   const location = useLocation();
   const path = location.pathname;
-
+  const navigate = useNavigate();
   const handleSignout = (e) => {
     e.preventDefault();
     setIsAuth(false);
     localStorage.setItem("token", "");
     setJwt("");
+    navigate("/");
   };
 
   return (
@@ -86,22 +87,23 @@ export default function Navbar() {
                       <Menu.Button className="bg-white  flex text-sm focus:outline-none focus:ring-0 items-center">
                         <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-10 w-10 rounded-full shadow object-contain"
+                          className={`h-10 w-10 rounded-full shadow object-contain border border-2  ${
+                            user.available
+                              ? "border-green-400"
+                              : "border-red-400"
+                          } `}
                           src={
                             user.avatar ||
                             "https://fromlittlethings.com/wp-content/plugins/wp-social-reviews/assets/images/template/review-template/placeholder-image.png"
                           }
                           alt=""
                         />
-                        <h4
-                          to="/profile"
-                          className="border-transparent text-gray-700 hover:border-sky-600 hover:text-sky-60 inline-flex items-center px-2   text-sm font-medium "
-                        >
+                        <h4 className="border-transparent text-gray-700 hover:border-sky-600 hover:text-sky-60 inline-flex items-center px-2   text-sm font-medium ">
                           Hello{", "}
-                          {user.accountType === "employer" ? (
+                          {user?.accountType === "employer" ? (
                             <span className="ml-1 text-sky-600 capitalize flex items-center">
-                              {user.username}
-                              {user.subscribed ? (
+                              {user?.username}
+                              {user?.subscribed ? (
                                 <CheckIcon className="flex-shrink-0 h-5 w-5 text-green-500 ml-1" />
                               ) : (
                                 <XIcon className="flex-shrink-0 h-5 w-5 text-red-500 ml-1" />
@@ -109,7 +111,7 @@ export default function Navbar() {
                             </span>
                           ) : (
                             <span className="ml-1 text-sky-600 capitalize flex items-center">
-                              {user.username}
+                              {user?.username}
                             </span>
                           )}
                         </h4>
@@ -144,7 +146,7 @@ export default function Navbar() {
                       <Menu.Item>
                         {({ active }) => (
                           <Link
-                            to="#"
+                            to={`/user/${user?.username}`}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
@@ -154,6 +156,21 @@ export default function Navbar() {
                           </Link>
                         )}
                       </Menu.Item>
+                      {user?.accountType === "employer" && (
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              to="/order"
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              My Subscription
+                            </Link>
+                          )}
+                        </Menu.Item>
+                      )}
 
                       <Menu.Item>
                         {({ active }) => (

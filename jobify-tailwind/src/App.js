@@ -2,11 +2,13 @@ import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import PageNotFound from "./components/PageNotFound";
 import CondidatesPage from "./pages/CondidatesPage";
 import Home from "./pages/Home";
 import JobsPage from "./pages/JobsPage";
 import Membership from "./pages/Membership";
 import OrderPage from "./pages/OrderPage";
+import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
 import SigninPage from "./pages/SigninPage";
 import Success from "./pages/Success";
@@ -26,7 +28,7 @@ const App = () => {
   const location = useLocation();
   return (
     <>
-      {location.pathname != "/signin" && location.pathname != "/register" && (
+      {location.pathname !== "/signin" && location.pathname !== "/register" && (
         <Navbar />
       )}
 
@@ -40,10 +42,12 @@ const App = () => {
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/condidates" element={<CondidatesPage />} />
         <Route path="/order" element={<OrderPage />} />
+        <Route path="/user/:username" element={<ProfilePage />} />
+        <Route path="/*" element={<PageNotFound />} />
       </Routes>
-      {location.pathname != "/signin" &&
-        location.pathname != "/register" &&
-        location.pathname != "/order" && <Footer />}
+      {location.pathname !== "/signin" &&
+        location.pathname !== "/register" &&
+        location.pathname !== "/order" && <Footer />}
     </>
   );
 };
