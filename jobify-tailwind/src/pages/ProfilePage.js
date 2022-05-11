@@ -8,12 +8,16 @@ import ManagePassword from "../components/ManagePassword";
 import UpdateProfile from "../components/UpdateProfile";
 import CreateCompany from "../components/CreateCompany";
 import PageNotFound from "../components/PageNotFound";
+import AddJob from "../components/AddJob";
+import MyJobs from "../components/MyJobs";
 
 const subNavigation = [
-  { name: "Profile", icon: UserCircleIcon, current: true },
+  { name: "Profile", icon: UserCircleIcon, current: false },
   { name: "Password", icon: KeyIcon, current: false },
   { name: "Company", icon: KeyIcon, current: false },
   { name: "Create Company", icon: KeyIcon, current: false },
+  { name: "Add Job", icon: KeyIcon, current: false },
+  { name: "Posted Jobs", icon: KeyIcon, current: false },
   { name: "Notifications", icon: BellIcon, current: false },
 ];
 
@@ -22,8 +26,8 @@ function classNames(...classes) {
 }
 
 export default function ProfilePage() {
-  const { user, jwt } = useContext(UserContext);
-  const [section, setSection] = useState("Profile");
+  const { user } = useContext(UserContext);
+  const [section, setSection] = useState("");
 
   const handleNavigation = (e, item) => {
     e.preventDefault();
@@ -104,7 +108,9 @@ export default function ProfilePage() {
                     if (
                       user.accountType === "condidate" &&
                       (item.name === "Company" ||
-                        item.name === "Create Company")
+                        item.name === "Create Company" ||
+                        item.name === "Add Job" ||
+                        item.name === "Posted Jobs")
                     ) {
                       return;
                     }
@@ -138,10 +144,10 @@ export default function ProfilePage() {
               {section === "Profile" && <UpdateProfile />}
               {section === "Company" && <UpdateCompany />}
               {section === "Create Company" && <CreateCompany />}
+              {section === "Add Job" && <AddJob />}
+              {section === "Posted Jobs" && <MyJobs />}
               {section === "Password" && <ManagePassword />}
-              {section === "Notifications" && (
-                <Notifications me={user} jwt={jwt} />
-              )}
+              {section === "Notifications" && <Notifications />}
             </div>
           </div>
         </div>

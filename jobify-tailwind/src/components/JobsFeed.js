@@ -15,100 +15,106 @@ import Pagination from "./Pagination";
 const positions = [
   {
     id: 1,
-    title: "Senior Back End Developer",
-    type: "Full-time",
-    location: "Remote, USA",
-    department: "Engineering",
-    closeDate: new Date("2022-03-05T03:24:00"),
-    yearlysalary: "$20k - $50k",
-    hourlySalary: "$25 - $35",
-    minHour: "35",
+    title: "Back End Developer",
+    type: "fullTime",
+    expiryDate: new Date("2022-03-05T03:24:00"),
     featured: true,
     company: "Slack",
-    excerpt:
+    minSalary: 2000,
+    maxSalary: 3000,
+    experienceLevel: "entry",
+    place: "remote",
+    aplicants: 10,
+    active: true,
+    minHourlyPrice: 20,
+    maxHourlyPrice: 35,
+    minHour: 40,
+    user: 1,
+    locations: "Poland, Canada, USA",
+    description:
       "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
   },
   {
     id: 2,
-    title: "Junior Front End Developer",
-    type: "Freelance",
-    location: "Remote, Poland",
-    department: "Engineering",
-    closeDate: new Date("2022-03-10T03:24:00"),
-    yearlysalary: "20k - 50k",
+    title: "Back End Developer",
+    type: "partTime",
+    expiryDate: new Date("2022-03-05T03:24:00"),
+    featured: true,
+    company: "Slack",
+    minSalary: 2000,
+    maxSalary: 3000,
+    experienceLevel: "junior",
+    place: "remote",
+    aplicants: 10,
+    active: true,
+    minHourlyPrice: 20,
+    maxHourlyPrice: 35,
+    user: 1,
+    locations: "Poland, Canada, USA",
+    description:
+      "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
   },
   {
     id: 3,
-    title: "User Interface Designer",
-    type: "Internship",
-    location: "Russia, Spain, Canada",
-    department: "Design",
-    closeDate: new Date("2022-02-28T03:24:00"),
-    yearlysalary: "$20k - $50k",
+    title: "Back End Developer",
+    type: "contract",
+    expiryDate: new Date("2022-03-05T03:24:00"),
     featured: true,
+    company: "Slack",
+    minSalary: 2000,
+    maxSalary: 3000,
+    experienceLevel: "mid",
+    place: "remote",
+    aplicants: 10,
+    active: true,
+    minHourlyPrice: 20,
+    maxHourlyPrice: 35,
+    user: 1,
+    locations: "Poland, Canada, USA",
+    description:
+      "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
   },
   {
     id: 4,
-    title: "Senior Full Stack Developer",
-    type: "Part-time",
-    location: "Remote, Worldwide",
-    department: "Engineering",
-    closeDate: new Date("2022-03-15T03:24:00"),
-    yearlysalary: "$30k - $60k",
-  },
-  {
-    id: 5,
-    title: "Senior Full Stack Developer",
-    type: "Temporary",
-    location: "Remote, Worldwide",
-    department: "Engineering",
-    closeDate: new Date("2022-03-01T03:24:00"),
-    yearlysalary: "50k - 100k",
+    title: "Back End Developer",
+    type: "fullTime",
+    expiryDate: new Date("2022-03-05T03:24:00"),
     featured: true,
-  },
-  {
-    id: 6,
-    title: "Mid User Interface Designer",
-    type: "Full-time",
-    location: "Remote, Europa",
-    department: "Design",
-    closeDate: new Date("2022-02-11T03:24:00"),
-    yearlysalary: "$20k - $50k",
-  },
-  {
-    id: 7,
-    title: "Mid User Interface Designer",
-    type: "Full-time",
-    location: "Remote, Europa",
-    department: "Design",
-    closeDate: new Date("2022-02-11T03:24:00"),
-    yearlysalary: "$20k - $50k",
+    company: "Slack",
+    minSalary: 2000,
+    maxSalary: 3000,
+    experienceLevel: "senior",
+    place: "remote",
+    aplicants: 10,
+    active: true,
+    minHourlyPrice: 20,
+    maxHourlyPrice: 35,
+    user: 1,
+    locations: "Poland, Canada, USA",
+    description:
+      "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
   },
 ];
 const borderColor = (type) => {
-  switch (type.toLowerCase()) {
-    case "freelance":
+  switch (type) {
+    case "contract":
       return "border-green-400";
-    case "full-time":
+    case "fullTime":
       return "border-sky-300";
-    case "temporary":
-      return "border-orange-400";
-    case "part-time":
-      return "border-indigo-300";
+    case "partTime":
+      return "border-yellow-300";
     default:
       return;
   }
 };
 const bgColor = (type) => {
-  switch (type.toLowerCase()) {
-    case "freelance":
+  switch (type) {
+    case "contract":
       return "bg-green-400";
-    case "full-time":
+    case "fullTime":
       return "bg-sky-300";
-    case "temporary":
-      return "bg-orange-400";
-    case "part-time":
-      return "bg-indigo-300";
+    case "partTime":
+      return "bg-yellow-300";
     default:
       return;
   }
@@ -150,8 +156,8 @@ function JobsFeed() {
                   )}`}
                 >
                   <div className="px-4 py-4 sm:px-6">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-zinc-900 truncate">
+                    <div className="flex items-center">
+                      <p className="text-sm font-medium text-zinc-900 truncate capitalize">
                         {position.title}
                       </p>
                       <div
@@ -159,7 +165,16 @@ function JobsFeed() {
                           position.type
                         )}`}
                       >
-                        <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-slate-700">
+                        <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-slate-700 capitalize">
+                          {position.experienceLevel}
+                        </p>
+                      </div>
+                      <div
+                        className={`ml-auto py-1 flex-shrink-0 flex rounded-sm ${bgColor(
+                          position.type
+                        )}`}
+                      >
+                        <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-slate-700 capitalize">
                           {position.type}
                         </p>
                       </div>
@@ -171,14 +186,14 @@ function JobsFeed() {
                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                             aria-hidden="true"
                           />
-                          {position.yearlysalary}
+                          ${position.minSalary} -- ${position.maxSalary}
                         </p>
-                        <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
+                        <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6 capitalize">
                           <LocationMarkerIcon
                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                             aria-hidden="true"
                           />
-                          {position.location}
+                          {position.place} / {position.locations}
                         </p>
                       </div>
                       <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
@@ -188,8 +203,8 @@ function JobsFeed() {
                         />
                         <p>
                           Posted{" "}
-                          <time dateTime={position.closeDate}>
-                            {format(position.closeDate)}
+                          <time dateTime={position.expiryDate}>
+                            {format(position.expiryDate)}
                           </time>
                         </p>
                       </div>
@@ -238,7 +253,7 @@ function JobsFeed() {
                 </h3>
                 <div className="mt-2 flex-shrink-0 flex rounded-sm">
                   <p
-                    className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold text-slate-700 ${bgColor(
+                    className={` capitalize px-2 py-1 inline-flex text-xs leading-5 font-semibold text-slate-700 ${bgColor(
                       position.type
                     )}`}
                   >
@@ -251,17 +266,17 @@ function JobsFeed() {
                   <div className="py-4 flex gap-4">
                     <p className="flex items-center text-sm text-gray-500">
                       <BriefcaseIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 capitalize"
                         aria-hidden="true"
                       />
                       {position.company}
                     </p>
-                    <p className="flex items-center text-sm text-gray-500">
+                    <p className="flex items-center text-sm text-gray-500 capitalize">
                       <LocationMarkerIcon
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      {position.location}
+                      {position.place} / {position.locations}
                     </p>
                   </div>
                   <div className="py-4 flex gap-4">
@@ -270,7 +285,7 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      {position.yearlysalary} / year
+                      ${position.minSalary} -- ${position.maxSalary} / year
                     </p>
                   </div>
                   <div className="py-4 flex gap-4">
@@ -279,7 +294,7 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      {position.hourlySalary} / hour
+                      ${position.minHourlyPrice} / hour
                     </p>
                   </div>
                   <div className="py-4 flex gap-4">
@@ -288,7 +303,7 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      {position.hourlySalary} / hour
+                      ${position.maxHourlyPrice} / hour
                     </p>
                     <p className="flex items-center text-sm text-gray-500">
                       <ClockIcon
@@ -301,7 +316,7 @@ function JobsFeed() {
 
                   <div className="py-5">
                     <dd className="text-md text-gray-600 mt-0 line-clamp-6">
-                      <p>{position.excerpt}</p>
+                      <p>{position.description}</p>
                     </dd>
                   </div>
                   <button

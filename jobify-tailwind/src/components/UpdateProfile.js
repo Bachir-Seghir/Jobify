@@ -12,19 +12,19 @@ function classNames(...classes) {
 }
 
 const UpdateProfile = () => {
-  const [inputs, setInputs] = useState({});
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-  const { user, jwt } = useContext(UserContext);
-
-  useEffect(() => {
-    user && setInputs((state) => ({ ...state, available: user.available }));
-  }, [user]);
+  const { user, jwt, me } = useContext(UserContext);
+  const [inputs, setInputs] = useState({ ...user });
 
   const handleInputChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setInputs((state) => ({ ...state, [name]: value }));
+    setInputs((state) => ({
+      ...state,
+      [name]:
+        name === "username" ? value.replace(/ /g, "").toLowerCase() : value,
+    }));
   };
 
   const handleSubmitChanges = async (e) => {
@@ -45,6 +45,7 @@ const UpdateProfile = () => {
       .then((res) => {
         setLoading(false);
         setShow(true);
+        me();
       });
   };
   if (loading)
@@ -93,9 +94,8 @@ const UpdateProfile = () => {
                   id="username"
                   autoComplete="username"
                   className="focus:ring-sky-500 focus:border-sky-500 flex-grow block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300 text-gray-400"
-                  placeholder={user?.username}
+                  defaultValue={inputs.username}
                   onChange={(e) => handleInputChange(e)}
-                  value={inputs?.username || ""}
                 />
               </div>
             </div>
@@ -107,8 +107,8 @@ const UpdateProfile = () => {
                 Email
               </label>
               <input
-                placeholder={user?.email}
-                value={inputs.email || ""}
+                defaultValue={inputs.email}
+                //value={inputs.email || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="email"
                 name="email"
@@ -125,7 +125,7 @@ const UpdateProfile = () => {
                 Account Type :
               </label>
               <h3 className="ml-1 block px-3 text-sm text-gray-600 font-bold capitalize">
-                {user?.accountType || ""}
+                {inputs.accountType || ""}
               </h3>
             </div>
           </div>
@@ -145,7 +145,7 @@ const UpdateProfile = () => {
                 >
                   <img
                     className="rounded-full h-full w-full "
-                    src={user?.avatar || ""}
+                    src={inputs.avatar || ""}
                     alt=""
                   />
                 </div>
@@ -172,7 +172,7 @@ const UpdateProfile = () => {
             <div className="hidden relative rounded-full overflow-hidden lg:block">
               <img
                 className="relative rounded-full w-40 h-40  border border-1 border-gray-200"
-                src={user?.avatar}
+                src={inputs.avatar}
                 alt=""
               />
               <label
@@ -203,8 +203,8 @@ const UpdateProfile = () => {
                   Full Name
                 </label>
                 <input
-                  placeholder={user?.fullname}
-                  value={inputs.fullname || ""}
+                  defaultValue={inputs.fullname}
+                  //value={inputs.fullname || ""}
                   onChange={(e) => handleInputChange(e)}
                   type="text"
                   name="fullname"
@@ -228,7 +228,7 @@ const UpdateProfile = () => {
                     name="address"
                     rows={3}
                     className="shadow-sm focus:ring-sky-500 focus:border-sky-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md text-gray-400"
-                    defaultValue={user?.address || ""}
+                    defaultValue={inputs.address || ""}
                     onChange={(e) => handleInputChange(e)}
                   />
                 </div>
@@ -242,8 +242,8 @@ const UpdateProfile = () => {
                   Age
                 </label>
                 <input
-                  placeholder={user?.age}
-                  value={inputs.age || ""}
+                  defaultValue={inputs.age}
+                  //qvalue={inputs.age || ""}
                   onChange={(e) => handleInputChange(e)}
                   type="number"
                   name="age"
@@ -260,10 +260,10 @@ const UpdateProfile = () => {
                   Birthday
                 </label>
                 <input
-                  placeholder={user?.birthday}
-                  value={
-                    inputs.birthday ? inputs.birthday : user?.birthday || ""
-                  }
+                  defaultValue={inputs.birthday}
+                  //value={
+                  // inputs.birthday ? inputs.birthday : user?.birthday || ""
+                  //}
                   onChange={(e) => handleInputChange(e)}
                   type="date"
                   name="birthday"
@@ -285,7 +285,7 @@ const UpdateProfile = () => {
                     name="about"
                     rows={3}
                     className="shadow-sm focus:ring-sky-500 focus:border-sky-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md text-gray-400"
-                    defaultValue={""}
+                    defaultValue={inputs.about}
                     onChange={(e) => handleInputChange(e)}
                   />
                 </div>

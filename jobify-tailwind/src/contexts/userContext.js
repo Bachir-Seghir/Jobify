@@ -40,7 +40,7 @@ const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, isAuth, setIsAuth, jwt, setJwt }}
+      value={{ user, setUser, isAuth, setIsAuth, jwt, setJwt, me }}
     >
       {children}
     </UserContext.Provider>

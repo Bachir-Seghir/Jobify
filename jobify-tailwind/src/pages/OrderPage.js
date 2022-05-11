@@ -7,26 +7,18 @@ import PageNotFound from "../components/PageNotFound";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 function OrderPage() {
-  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user, jwt } = useContext(UserContext);
+  const { user, jwt, me } = useContext(UserContext);
 
   useEffect(() => {
-    if (jwt) {
+    const fetchUser = async () => {
       setLoading(true);
-      axios
-        .get(`${API_URL}/orders`, {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        })
-        .then((res) => {
-          setOrder(res.data[0]);
-          setLoading(false);
-        });
-    }
-  }, [jwt]);
+      await me();
+      setLoading(false);
+    };
+    fetchUser();
+  }, []);
 
   //loading spinner
   if (loading)
@@ -36,6 +28,7 @@ function OrderPage() {
       </div>
     );
   if (!user) return <PageNotFound />;
+
   if (!user?.subscribed) {
     navigate("/membership");
   }
@@ -65,7 +58,9 @@ function OrderPage() {
 
             <dl className="mt-16 text-sm font-medium">
               <dt className="text-gray-900">Subscription ID</dt>
-              <dd className="mt-2 text-sky-600">{order?.checkout_session}</dd>
+              <dd className="mt-2 text-sky-600">
+                {user?.order?.checkout_session}
+              </dd>
             </dl>
 
             <ul
@@ -74,10 +69,12 @@ function OrderPage() {
             >
               <li className="flex py-6 space-x-6">
                 <div className="flex-auto space-y-1">
-                  <h3 className="text-gray-900">Plan : {order?.plan.title}</h3>
+                  <h3 className="text-gray-900">
+                    Plan : {user?.order?.plan.title}
+                  </h3>
                 </div>
                 <p className="flex-none font-medium text-sky-600">
-                  ${order?.price}
+                  ${user?.order?.price}
                 </p>
               </li>
               <li className="flex py-6 space-x-6">
@@ -85,7 +82,7 @@ function OrderPage() {
                   <h3 className="text-gray-900">Status :</h3>
                 </div>
                 <p className="flex-none font-medium text-green-500 uppercase">
-                  {order?.status}
+                  {user?.order?.status}
                 </p>
               </li>
               <li className="flex py-6 space-x-6">
@@ -93,7 +90,7 @@ function OrderPage() {
                   <h3 className="text-gray-900">Subscription Date :</h3>
                 </div>
                 <p className="flex-none font-medium text-gray-500">
-                  {order?.created_at.split("T")[0]}
+                  {user?.order?.created_at.split("T")[0]}
                 </p>
               </li>
             </ul>

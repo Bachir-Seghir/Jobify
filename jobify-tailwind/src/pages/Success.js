@@ -11,50 +11,55 @@ function Success() {
   const location = useLocation();
   const search = location.search;
   const session_id = new URLSearchParams(search).get("session_id");
-  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user, jwt } = useContext(UserContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setLoading(true);
-    session_id &&
-      jwt &&
-      axios.put(
-        `${API_URL}/users/me`,
-        {
-          subscribed: true,
+  const updateMeSubscribe = async () => {
+    axios.put(
+      `${API_URL}/users/me`,
+      {
+        subscribed: true,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
-      );
-    setLoading(false);
-  }, [session_id, jwt]);
+      }
+    );
+  };
+
+  const confirmOrder = async () => {
+    axios.post(`${API_URL}/orders/confirm`, {
+      checkout_session: session_id,
+    });
+  };
 
   useEffect(() => {
-    const confirmOrder = async () => {
+    if (user) {
       setLoading(true);
-      axios
-        .post(`${API_URL}/orders/confirm`, { checkout_session: session_id })
-        .then((res) => {
-          setOrder(res.data);
-        });
-      setLoading(false);
-    };
-    confirmOrder();
-  }, [session_id]);
+      // check if the extracted session_id from search matchs the checkout_session from the backend
+      if (user.order?.checkout_session === session_id) {
+        console.log("confirm order");
+        confirmOrder();
+        console.log("update me");
+        updateMeSubscribe();
+      }
+    }
+    setLoading(false);
+  }, [user]);
 
   if (!user) return <PageNotFound />;
+
   if (loading)
     return (
       <div className="h-screen w-screen">
         <LoadingSpinner />
       </div>
     );
-  if (user.subscribed) navigate("/order");
+
+  //if (user.subscribed) navigate("/order");
+
   return (
     <main className="relative min-h-full">
       <div className="h-80 overflow-hidden lg:absolute lg:w-1/2 lg:h-full lg:pr-4 xl:pr-12">
@@ -79,47 +84,13 @@ function Success() {
               attract the best Condidates !
             </p>
 
-            <dl className="mt-16 text-sm font-medium">
-              <dt className="text-gray-900">Subscription ID</dt>
-              <dd className="mt-2 text-indigo-600">
-                {order?.checkout_session}
-              </dd>
-            </dl>
-
-            <ul
-              role="list"
-              className="mt-6 text-sm font-medium text-gray-500 border-t border-gray-200 divide-y divide-gray-200"
-            >
-              <li className="flex py-6 space-x-6">
-                <div className="flex-auto space-y-1">
-                  <h3 className="text-gray-900">Plan : {order?.plan.title}</h3>
-                </div>
-                <p className="flex-none font-medium text-sky-600">
-                  ${order?.price}
-                </p>
-              </li>
-              <li className="flex py-6 space-x-6">
-                <div className="flex-auto space-y-1">
-                  <h3 className="text-gray-900">Status :</h3>
-                </div>
-                <p className="flex-none font-medium text-green-500 uppercase">
-                  {order?.status}
-                </p>
-              </li>
-              <li className="flex py-6 space-x-6">
-                <div className="flex-auto space-y-1">
-                  <h3 className="text-gray-900">Subscription Date :</h3>
-                </div>
-                <p className="flex-none font-medium text-gray-500"></p>
-              </li>
-            </ul>
-
             <div className="mt-16 border-t border-gray-200 py-6 text-right">
               <Link
-                to="/"
+                to="/order"
                 className="text-sm font-medium text-sky-600 hover:text-gray-500"
               >
-                Create Your Company<span aria-hidden="true"> &rarr;</span>
+                Check Your Subscription Status
+                <span aria-hidden="true"> &rarr;</span>
               </Link>
             </div>
           </div>

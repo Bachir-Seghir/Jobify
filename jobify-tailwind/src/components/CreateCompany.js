@@ -10,6 +10,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import axios from "axios";
 import { API_URL } from "../utils/urls";
 import SuccessFeedback from "./SuccessFeedback";
+import { Link } from "react-router-dom";
 
 const CreateCompany = () => {
   const [company, setCompany] = useState(null);
@@ -21,10 +22,7 @@ const CreateCompany = () => {
 
   // query the user's company if exist
   useEffect(() => {
-    user?.company &&
-      axios.get(`${API_URL}/companies/${user?.company}`).then((res) => {
-        setCompany(res.data);
-      });
+    user?.company && setCompany(user.company);
   }, []);
 
   const handleDelete = (id) => {
@@ -48,7 +46,7 @@ const CreateCompany = () => {
   const handleInputChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    setInputs((state) => ({ ...state, [name]: value }));
+    setCompany((state) => ({ ...state, [name]: value }));
   };
 
   const handleSubmitChanges = async (e) => {
@@ -58,7 +56,7 @@ const CreateCompany = () => {
       .post(
         `${API_URL}/companies`,
         {
-          ...inputs,
+          ...company,
         },
         {
           headers: {
@@ -79,7 +77,25 @@ const CreateCompany = () => {
         <LoadingSpinner />
       </div>
     );
-
+  if (!user?.subscribed)
+    return (
+      <div className="py-6 px-4 sm:p-6 lg:pb-8 col-span-9">
+        <div>
+          <h2 className="text-lg leading-6 font-medium text-gray-900">
+            Subscribe to a Plan and Create Your Company
+          </h2>
+        </div>
+        <div className="mt-4">
+          <Link
+            to="/membership"
+            className="text-md font-medium text-sky-600 hover:text-gray-500"
+          >
+            Choose a Plan
+            <span aria-hidden="true"> &rarr;</span>
+          </Link>
+        </div>
+      </div>
+    );
   return (
     <div className="py-6 px-4 sm:p-6 lg:pb-8 col-span-9">
       <h2 className="text-lg mb-6 leading-6 font-medium text-gray-900 mb-8">
@@ -169,8 +185,8 @@ const CreateCompany = () => {
                 Company Name
               </label>
               <input
-                placeholder={company?.name}
-                value={inputs?.name || ""}
+                //placeholder={company?.name}
+                value={company?.name || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="name"
@@ -187,8 +203,8 @@ const CreateCompany = () => {
                 Company Size
               </label>
               <input
-                placeholder={company?.companySize}
-                value={inputs?.companySize || 0}
+                //placeholder={company?.companySize}
+                value={company?.companySize || 0}
                 onChange={(e) => handleInputChange(e)}
                 type="number"
                 name="companySize"
@@ -273,8 +289,8 @@ const CreateCompany = () => {
                 Company Email
               </label>
               <input
-                placeholder={company?.email}
-                value={inputs?.email || ""}
+                //placeholder={company?.email}
+                value={company?.email || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="email"
                 name="email"
@@ -291,8 +307,8 @@ const CreateCompany = () => {
                 Company Phone
               </label>
               <input
-                placeholder={company?.phone}
-                value={inputs?.phone || ""}
+                //placeholder={company?.phone}
+                value={company?.phone || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="phone"
@@ -309,8 +325,8 @@ const CreateCompany = () => {
                 Company Website
               </label>
               <input
-                placeholder={company?.website}
-                value={inputs?.website || ""}
+                //placeholder={company?.website}
+                value={company?.website || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="website"
@@ -327,8 +343,8 @@ const CreateCompany = () => {
                 Company Address
               </label>
               <input
-                placeholder={company?.address}
-                value={inputs?.address || ""}
+                //placeholder={company?.address}
+                value={company?.address || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="address"
@@ -345,8 +361,8 @@ const CreateCompany = () => {
                 specialities
               </label>
               <input
-                placeholder={company?.specialities}
-                value={inputs?.specialities || ""}
+                //placeholder={company?.specialities}
+                value={company?.specialities || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="specialities"
@@ -358,12 +374,6 @@ const CreateCompany = () => {
           </div>
 
           <div className="mt-4 py-4 px-4 flex justify-end sm:px-6 col-span-12">
-            <button
-              type="button"
-              className="bg-white border border-gray-300 rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-            >
-              Cancel
-            </button>
             <button
               type="submit"
               className="ml-5 bg-sky-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
