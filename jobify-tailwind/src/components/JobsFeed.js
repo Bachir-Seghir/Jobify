@@ -11,90 +11,10 @@ import {
 } from "@heroicons/react/solid";
 import { format } from "timeago.js";
 import Pagination from "./Pagination";
+import axios from "axios";
+import { API_URL } from "../utils/urls";
+import LoadingSpinner from "./LoadingSpinner";
 
-const positions = [
-  {
-    id: 1,
-    title: "Back End Developer",
-    type: "fullTime",
-    expiryDate: new Date("2022-03-05T03:24:00"),
-    featured: true,
-    company: "Slack",
-    minSalary: 2000,
-    maxSalary: 3000,
-    experienceLevel: "entry",
-    place: "remote",
-    aplicants: 10,
-    active: true,
-    minHourlyPrice: 20,
-    maxHourlyPrice: 35,
-    minHour: 40,
-    user: 1,
-    locations: "Poland, Canada, USA",
-    description:
-      "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
-  },
-  {
-    id: 2,
-    title: "Back End Developer",
-    type: "partTime",
-    expiryDate: new Date("2022-03-05T03:24:00"),
-    featured: true,
-    company: "Slack",
-    minSalary: 2000,
-    maxSalary: 3000,
-    experienceLevel: "junior",
-    place: "remote",
-    aplicants: 10,
-    active: true,
-    minHourlyPrice: 20,
-    maxHourlyPrice: 35,
-    user: 1,
-    locations: "Poland, Canada, USA",
-    description:
-      "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
-  },
-  {
-    id: 3,
-    title: "Back End Developer",
-    type: "contract",
-    expiryDate: new Date("2022-03-05T03:24:00"),
-    featured: true,
-    company: "Slack",
-    minSalary: 2000,
-    maxSalary: 3000,
-    experienceLevel: "mid",
-    place: "remote",
-    aplicants: 10,
-    active: true,
-    minHourlyPrice: 20,
-    maxHourlyPrice: 35,
-    user: 1,
-    locations: "Poland, Canada, USA",
-    description:
-      "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
-  },
-  {
-    id: 4,
-    title: "Back End Developer",
-    type: "fullTime",
-    expiryDate: new Date("2022-03-05T03:24:00"),
-    featured: true,
-    company: "Slack",
-    minSalary: 2000,
-    maxSalary: 3000,
-    experienceLevel: "senior",
-    place: "remote",
-    aplicants: 10,
-    active: true,
-    minHourlyPrice: 20,
-    maxHourlyPrice: 35,
-    user: 1,
-    locations: "Poland, Canada, USA",
-    description:
-      "We're hiring a designer to shape and drive storytelling and communication of our product features and innovations.Designers at Slack work across every stage of product development, from discovery and ideation, prototyping, definition and build, while communicating internally and externally the customer value of such work.",
-  },
-];
 const borderColor = (type) => {
   switch (type) {
     case "contract":
@@ -121,24 +41,60 @@ const bgColor = (type) => {
 };
 
 function JobsFeed() {
-  const perPage = 6;
-  let skip = 0;
-  const pageCount = Math.ceil(positions.length / perPage);
+  const perPage = process.env.REACT_APP_PERPAGE;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [skip, setSkip] = useState(0);
+
   const [currentFeatIdx, setCurrentFeatIdx] = useState(0);
   const [featuredPos, setFeaturedPos] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [pageCount, setPageCount] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setFeaturedPos(positions.filter((item) => item.featured));
+    setSkip(currentPage * perPage - perPage);
+  }, [currentPage]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      axios.get(`${API_URL}/jobs`).then((res) => {
+        setPosts(res.data.reverse());
+        setPageCount(Math.ceil(res.data.length / perPage));
+        setLoading(false);
+      });
+    };
+    fetchPosts();
   }, []);
+
+  useEffect(() => {
+    setFeaturedPos(posts.filter((item) => item.featured).reverse());
+  }, [posts]);
 
   const handleClick = (e, action) => {
     e.preventDefault();
+    // loop
+    if (action === "next" && currentFeatIdx === featuredPos.length - 1) {
+      setCurrentFeatIdx(0);
+    } else if (action === "prev" && currentFeatIdx === 0) {
+      setCurrentFeatIdx(featuredPos.length - 1);
+    }
+    // inc/dec
     if (action === "next" && currentFeatIdx < featuredPos.length - 1) {
       setCurrentFeatIdx(currentFeatIdx + 1);
     } else if (action === "prev" && currentFeatIdx > 0) {
       setCurrentFeatIdx(currentFeatIdx - 1);
     }
   };
+
+  // Returns
+  if (loading)
+    return (
+      <div className="py-40">
+        <LoadingSpinner />
+      </div>
+    );
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 py-12 px-16 xl:px-28">
       <div className="order-2 lg:order-1 lg:col-span-2 flex flex-col py-6">
@@ -147,7 +103,7 @@ function JobsFeed() {
         </h3>
         <div className="bg-white border border overflow-hidden rounded-md">
           <ul role="list" className="divide-y divide-gray-200">
-            {positions.slice(skip, skip + perPage).map((position) => (
+            {posts.slice(skip, skip + perPage).map((position) => (
               <li key={position.id}>
                 <a
                   href="#"
@@ -203,8 +159,8 @@ function JobsFeed() {
                         />
                         <p>
                           Posted{" "}
-                          <time dateTime={position.expiryDate}>
-                            {format(position.expiryDate)}
+                          <time dateTime={position.created_at}>
+                            {format(position.created_at)}
                           </time>
                         </p>
                       </div>
@@ -215,7 +171,11 @@ function JobsFeed() {
             ))}
           </ul>
         </div>
-        <Pagination pageCount={pageCount} />
+        <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          pageCount={pageCount}
+        />
       </div>
       <div className="order-1 lg:order-2 py-6 overflow-hidden relative">
         <div className="flex justify-between pb-8">
@@ -269,7 +229,7 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 capitalize"
                         aria-hidden="true"
                       />
-                      {position.company}
+                      {position.company.name}
                     </p>
                     <p className="flex items-center text-sm text-gray-500 capitalize">
                       <LocationMarkerIcon

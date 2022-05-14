@@ -56,7 +56,6 @@ function RegisterPage() {
         username,
         password,
         accountType: selectedMode,
-        subscribed: selectedMode === "condidate",
       })
       .then((res) => {
         // set the Authenticated status to true
@@ -94,7 +93,7 @@ function RegisterPage() {
         <img
           className="block z-index-2 h-12 w-auto mb-4"
           src="https://drive.google.com/uc?export=view&id=1UsbTcP9u-KK7lJYDjSD3HgcuWiP5laLF"
-          alt="Workflow"
+          alt="Jobify"
         />
         <svg
           role="status"
@@ -123,9 +122,9 @@ function RegisterPage() {
             <div>
               <Link to="/">
                 <img
-                  className="hidden lg:block h-12 w-auto"
+                  className=" lg:block h-12 w-auto"
                   src="https://drive.google.com/uc?export=view&id=1UsbTcP9u-KK7lJYDjSD3HgcuWiP5laLF"
-                  alt="Workflow"
+                  alt="Jobify"
                 />
               </Link>
               <h2 className="mt-6 text-3xl font-extrabold text-slate-700">

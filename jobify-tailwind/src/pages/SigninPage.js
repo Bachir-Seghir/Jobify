@@ -45,7 +45,7 @@ function SigninPage() {
         <img
           className="block z-index-2 h-12 w-auto mb-4"
           src="https://drive.google.com/uc?export=view&id=1UsbTcP9u-KK7lJYDjSD3HgcuWiP5laLF"
-          alt="Workflow"
+          alt="Jobify"
         />
         <svg
           role="status"
@@ -76,9 +76,9 @@ function SigninPage() {
             <div>
               <Link to="/">
                 <img
-                  className="hidden lg:block h-12 w-auto"
+                  className=" lg:block h-12 w-auto"
                   src="https://drive.google.com/uc?export=view&id=1UsbTcP9u-KK7lJYDjSD3HgcuWiP5laLF"
-                  alt="Workflow"
+                  alt="Jobify"
                 />
               </Link>
               <h2 className="mt-6 text-3xl font-extrabold text-slate-700">

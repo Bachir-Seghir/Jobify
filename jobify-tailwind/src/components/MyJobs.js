@@ -18,7 +18,7 @@ const MyJobs = () => {
   const [feedback, setFeedback] = useState({ show: false, message: "" });
 
   // Context invocation
-  const { user, jwt } = useContext(UserContext);
+  const { user, jwt, me } = useContext(UserContext);
 
   // Handle Functions
   const handleInputChange = (e) => {
@@ -49,6 +49,7 @@ const MyJobs = () => {
           show: true,
           message: "Updated",
         }));
+        me();
       });
   };
 
@@ -74,16 +75,13 @@ const MyJobs = () => {
           show: true,
           message: "Deleted",
         }));
+        me();
       });
   };
   // useEffect Hooks
   useEffect(() => {
     setJobs(user.jobs);
-    /* axios.get(`${API_URL}/jobs`).then((res) => {
-        const userJobs = res.data.filter((job) => job.user.id === user.id);
-        setJobs(userJobs);
-      }); */
-  }, [user, feedback]);
+  }, [user]);
 
   // Returns
   if (loading)

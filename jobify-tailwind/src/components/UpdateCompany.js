@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 
 const UpdateCompany = () => {
   const [company, setCompany] = useState(null);
-  //const [inputs, setInputs] = useState({});
   const { user, jwt, me } = useContext(UserContext);
 
   const [loading, setLoading] = useState(false);
@@ -95,7 +94,6 @@ const UpdateCompany = () => {
               Company Name
             </label>
             <input
-              //placeholder={company?.name}
               value={company?.name || ""}
               onChange={(e) => handleInputChange(e)}
               type="text"
@@ -113,7 +111,6 @@ const UpdateCompany = () => {
               Company Size
             </label>
             <input
-              //placeholder={company?.companySize}
               value={company?.companySize || 0}
               onChange={(e) => handleInputChange(e)}
               type="number"
@@ -199,7 +196,6 @@ const UpdateCompany = () => {
               Company Email
             </label>
             <input
-              //placeholder={company?.email}
               value={company?.email || ""}
               onChange={(e) => handleInputChange(e)}
               type="email"
@@ -217,7 +213,6 @@ const UpdateCompany = () => {
               Company Phone
             </label>
             <input
-              //placeholder={company?.phone}
               value={company?.phone || ""}
               onChange={(e) => handleInputChange(e)}
               type="text"
@@ -235,7 +230,6 @@ const UpdateCompany = () => {
               Company Website
             </label>
             <input
-              //placeholder={company?.website}
               value={company?.website || ""}
               onChange={(e) => handleInputChange(e)}
               type="text"
@@ -253,7 +247,6 @@ const UpdateCompany = () => {
               Company Address
             </label>
             <input
-              //placeholder={company?.address}
               value={company?.address || ""}
               onChange={(e) => handleInputChange(e)}
               type="text"
@@ -271,7 +264,6 @@ const UpdateCompany = () => {
               specialities
             </label>
             <input
-              //placeholder={company?.specialities}
               value={company?.specialities || ""}
               onChange={(e) => handleInputChange(e)}
               type="text"

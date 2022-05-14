@@ -28,7 +28,7 @@ const posts = [
     date: "Mar 10, 2022",
     datetime: "2022-03-10",
     imageUrl:
-      "https://www.overtdigitalmarketing.com.au/wp-content/uploads/2021/02/search-engine-optimisation-seo.jpg",
+      "https://www.digitalmenta.com/wp-content/uploads/2019/09/tendencias-seo-2020.jpg",
     readingTime: "4 min",
     author: {
       name: "Brenna Goyette",

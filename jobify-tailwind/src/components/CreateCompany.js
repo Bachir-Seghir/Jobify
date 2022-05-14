@@ -45,8 +45,11 @@ const CreateCompany = () => {
 
   const handleInputChange = (e) => {
     e.preventDefault();
-    const { name, value } = e.target;
-    setCompany((state) => ({ ...state, [name]: value }));
+    const { name, value, type } = e.target;
+    setInputs((state) => ({
+      ...state,
+      [name]: type === "number" ? parseInt(value) : value,
+    }));
   };
 
   const handleSubmitChanges = async (e) => {
@@ -56,7 +59,7 @@ const CreateCompany = () => {
       .post(
         `${API_URL}/companies`,
         {
-          ...company,
+          ...inputs,
         },
         {
           headers: {
@@ -185,8 +188,7 @@ const CreateCompany = () => {
                 Company Name
               </label>
               <input
-                //placeholder={company?.name}
-                value={company?.name || ""}
+                value={inputs.name || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="name"
@@ -203,8 +205,7 @@ const CreateCompany = () => {
                 Company Size
               </label>
               <input
-                //placeholder={company?.companySize}
-                value={company?.companySize || 0}
+                value={inputs.companySize || 0}
                 onChange={(e) => handleInputChange(e)}
                 type="number"
                 name="companySize"
@@ -289,8 +290,7 @@ const CreateCompany = () => {
                 Company Email
               </label>
               <input
-                //placeholder={company?.email}
-                value={company?.email || ""}
+                value={inputs.email || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="email"
                 name="email"
@@ -307,8 +307,7 @@ const CreateCompany = () => {
                 Company Phone
               </label>
               <input
-                //placeholder={company?.phone}
-                value={company?.phone || ""}
+                value={inputs.phone || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="phone"
@@ -325,8 +324,7 @@ const CreateCompany = () => {
                 Company Website
               </label>
               <input
-                //placeholder={company?.website}
-                value={company?.website || ""}
+                value={inputs.website || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="website"
@@ -343,8 +341,7 @@ const CreateCompany = () => {
                 Company Address
               </label>
               <input
-                //placeholder={company?.address}
-                value={company?.address || ""}
+                value={inputs.address || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="address"
@@ -361,8 +358,7 @@ const CreateCompany = () => {
                 specialities
               </label>
               <input
-                //placeholder={company?.specialities}
-                value={company?.specialities || ""}
+                value={inputs.specialities || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="text"
                 name="specialities"

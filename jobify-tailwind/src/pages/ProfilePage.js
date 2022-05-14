@@ -1,6 +1,12 @@
 import React, { useContext, useState } from "react";
 import { Disclosure } from "@headlessui/react";
-import { BellIcon, KeyIcon, UserCircleIcon } from "@heroicons/react/outline";
+import {
+  BellIcon,
+  BriefcaseIcon,
+  KeyIcon,
+  OfficeBuildingIcon,
+  UserCircleIcon,
+} from "@heroicons/react/outline";
 
 import { UserContext } from "../contexts/userContext";
 import UpdateCompany from "../components/UpdateCompany";
@@ -11,20 +17,18 @@ import PageNotFound from "../components/PageNotFound";
 import AddJob from "../components/AddJob";
 import MyJobs from "../components/MyJobs";
 
-const subNavigation = [
-  { name: "Profile", icon: UserCircleIcon, current: false },
-  { name: "Password", icon: KeyIcon, current: false },
-  { name: "Company", icon: KeyIcon, current: false },
-  { name: "Create Company", icon: KeyIcon, current: false },
-  { name: "Add Job", icon: KeyIcon, current: false },
-  { name: "Posted Jobs", icon: KeyIcon, current: false },
-  { name: "Notifications", icon: BellIcon, current: false },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
+const subNavigation = [
+  { name: "Profile", icon: UserCircleIcon, current: false },
+  { name: "Password", icon: KeyIcon, current: false },
+  { name: "Company", icon: OfficeBuildingIcon, current: false },
+  { name: "Create Company", icon: OfficeBuildingIcon, current: false },
+  { name: "Add Job", icon: BriefcaseIcon, current: false },
+  { name: "Posted Jobs", icon: BriefcaseIcon, current: false },
+  { name: "Notifications", icon: BellIcon, current: false },
+];
 export default function ProfilePage() {
   const { user } = useContext(UserContext);
   const [section, setSection] = useState("");
@@ -114,6 +118,14 @@ export default function ProfilePage() {
                     ) {
                       return;
                     }
+                    if (
+                      user.accountType === "employer" &&
+                      !user.company &&
+                      item.name === "Company"
+                    ) {
+                      return;
+                    }
+
                     return (
                       <button
                         onClick={(e) => handleNavigation(e, item)}

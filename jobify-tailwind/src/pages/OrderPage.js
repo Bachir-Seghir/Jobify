@@ -8,17 +8,33 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 function OrderPage() {
   const [loading, setLoading] = useState(false);
+  const [order, setOrder] = useState(null);
   const navigate = useNavigate();
   const { user, jwt, me } = useContext(UserContext);
+  useEffect(() => {
+    me();
+  }, []);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const getOrder = async () => {
       setLoading(true);
-      await me();
-      setLoading(false);
+      axios
+        .get(`${API_URL}/orders`, {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        })
+        .then((res) => {
+          setOrder(res.data[0]);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err.message);
+          setLoading(false);
+        });
     };
-    fetchUser();
-  }, []);
+    user && getOrder();
+  }, [user]);
 
   //loading spinner
   if (loading)
@@ -58,9 +74,7 @@ function OrderPage() {
 
             <dl className="mt-16 text-sm font-medium">
               <dt className="text-gray-900">Subscription ID</dt>
-              <dd className="mt-2 text-sky-600">
-                {user?.order?.checkout_session}
-              </dd>
+              <dd className="mt-2 text-sky-600">{order?.checkout_session}</dd>
             </dl>
 
             <ul
@@ -69,12 +83,10 @@ function OrderPage() {
             >
               <li className="flex py-6 space-x-6">
                 <div className="flex-auto space-y-1">
-                  <h3 className="text-gray-900">
-                    Plan : {user?.order?.plan.title}
-                  </h3>
+                  <h3 className="text-gray-900">Plan : {order?.plan.title}</h3>
                 </div>
                 <p className="flex-none font-medium text-sky-600">
-                  ${user?.order?.price}
+                  ${order?.price}
                 </p>
               </li>
               <li className="flex py-6 space-x-6">
@@ -82,7 +94,7 @@ function OrderPage() {
                   <h3 className="text-gray-900">Status :</h3>
                 </div>
                 <p className="flex-none font-medium text-green-500 uppercase">
-                  {user?.order?.status}
+                  {order?.status}
                 </p>
               </li>
               <li className="flex py-6 space-x-6">
@@ -90,7 +102,7 @@ function OrderPage() {
                   <h3 className="text-gray-900">Subscription Date :</h3>
                 </div>
                 <p className="flex-none font-medium text-gray-500">
-                  {user?.order?.created_at.split("T")[0]}
+                  {order?.created_at.split("T")[0]}
                 </p>
               </li>
             </ul>

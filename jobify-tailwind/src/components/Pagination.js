@@ -4,8 +4,7 @@ import {
   ArrowNarrowRightIcon,
 } from "@heroicons/react/solid";
 
-function Pagination({ pageCount }) {
-  const [currentPage, setCurrentPage] = useState(1);
+function Pagination({ currentPage, setCurrentPage, pageCount }) {
   const handleClick = (e, action) => {
     e.preventDefault();
     if (action === "next" && currentPage < pageCount) {

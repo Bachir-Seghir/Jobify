@@ -108,7 +108,6 @@ const UpdateProfile = () => {
               </label>
               <input
                 defaultValue={inputs.email}
-                //value={inputs.email || ""}
                 onChange={(e) => handleInputChange(e)}
                 type="email"
                 name="email"
@@ -117,6 +116,7 @@ const UpdateProfile = () => {
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm text-gray-500"
               />
             </div>
+
             <div className="flex items-center col-span-9 lg:col-span-6">
               <label
                 htmlFor="accountType"
@@ -197,6 +197,23 @@ const UpdateProfile = () => {
             <div className="mt-6 grid grid-cols-12 gap-6">
               <div className="col-span-12 sm:col-span-6">
                 <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Title
+                </label>
+                <input
+                  defaultValue={inputs.title}
+                  onChange={(e) => handleInputChange(e)}
+                  type="title"
+                  name="title"
+                  id="title"
+                  autoComplete="title"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm text-gray-500"
+                />
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <label
                   htmlFor="fullname"
                   className="block text-sm font-medium text-gray-700"
                 >
@@ -204,7 +221,6 @@ const UpdateProfile = () => {
                 </label>
                 <input
                   defaultValue={inputs.fullname}
-                  //value={inputs.fullname || ""}
                   onChange={(e) => handleInputChange(e)}
                   type="text"
                   name="fullname"
@@ -243,7 +259,6 @@ const UpdateProfile = () => {
                 </label>
                 <input
                   defaultValue={inputs.age}
-                  //qvalue={inputs.age || ""}
                   onChange={(e) => handleInputChange(e)}
                   type="number"
                   name="age"
@@ -261,14 +276,28 @@ const UpdateProfile = () => {
                 </label>
                 <input
                   defaultValue={inputs.birthday}
-                  //value={
-                  // inputs.birthday ? inputs.birthday : user?.birthday || ""
-                  //}
                   onChange={(e) => handleInputChange(e)}
                   type="date"
                   name="birthday"
                   id="birthday"
                   autoComplete="birthday"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm text-gray-500"
+                />
+              </div>
+              <div className="col-span-12 sm:col-span-4">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Phone
+                </label>
+                <input
+                  defaultValue={inputs.phone}
+                  onChange={(e) => handleInputChange(e)}
+                  type="phone"
+                  name="phone"
+                  id="phone"
+                  autoComplete="phone"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm text-gray-500"
                 />
               </div>
