@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import PageNotFound from "./components/PageNotFound";
+import Condidate from "./pages/Condidate";
 import CondidatesPage from "./pages/CondidatesPage";
 import Home from "./pages/Home";
 import JobsPage from "./pages/JobsPage";
@@ -41,6 +42,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/condidates" element={<CondidatesPage />} />
+        <Route path="/condidate/:id" element={<Condidate />} />
         <Route path="/order" element={<OrderPage />} />
         <Route path="/user/:username" element={<ProfilePage />} />
         <Route path="/*" element={<PageNotFound />} />

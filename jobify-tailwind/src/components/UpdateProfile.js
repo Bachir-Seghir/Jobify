@@ -6,6 +6,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import axios from "axios";
 import { API_URL } from "../utils/urls";
 import SuccessFeedback from "../components/SuccessFeedback";
+import { PlusIcon, XCircleIcon } from "@heroicons/react/solid";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -16,6 +17,21 @@ const UpdateProfile = () => {
   const [show, setShow] = useState(false);
   const { user, jwt, me } = useContext(UserContext);
   const [inputs, setInputs] = useState({ ...user });
+  const [skills, setSkills] = useState([]);
+  const [mySkills, setMySkills] = useState([]);
+
+  useEffect(() => {
+    const getSkills = async () => {
+      axios.get(`${API_URL}/skills`).then((res) => {
+        setSkills(res.data);
+      });
+    };
+    getSkills();
+  }, []);
+
+  useEffect(() => {
+    user && setMySkills(user.skills);
+  }, [user]);
 
   const handleInputChange = (e) => {
     e.preventDefault();
@@ -27,6 +43,13 @@ const UpdateProfile = () => {
     }));
   };
 
+  const handleDeleteSkill = async (e, id) => {
+    setMySkills(mySkills.filter((skill) => skill.id !== id));
+  };
+  const handleAddSkill = async (e, skill) => {
+    setMySkills((state) => [...state, skill]);
+  };
+
   const handleSubmitChanges = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -35,6 +58,7 @@ const UpdateProfile = () => {
         `${API_URL}/users/me`,
         {
           ...inputs,
+          skills: mySkills,
         },
         {
           headers: {
@@ -301,6 +325,60 @@ const UpdateProfile = () => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm text-gray-500"
                 />
               </div>
+              <div className="col-span-12">
+                <label
+                  htmlFor="skills"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  My Skills
+                </label>
+                <div className="flex flex-wrap items-center py-2 gap-3">
+                  {mySkills?.map((skill) => (
+                    <div key={skill.id} className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <XCircleIcon
+                          className="w-4 h-4 text-red-400 cursor-pointer hover:text-red-700"
+                          onClick={(e) => handleDeleteSkill(e, skill.id)}
+                        />
+                      </div>
+                      <div className="ml-2 text-sm">
+                        <span className="font-medium text-gray-700">
+                          {skill.name}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="col-span-12">
+                <label
+                  htmlFor="skills"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Add Skills
+                </label>
+                <div className="flex flex-wrap items-center py-2 gap-3">
+                  {skills.map((skill) => (
+                    <div key={skill.id} className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <PlusIcon
+                          className="w-4 h-4 text-sky-400 cursor-pointer hover:text-sky-700"
+                          onClick={(e) => handleAddSkill(e, skill)}
+                        />
+                      </div>
+                      <div className="ml-2 text-sm">
+                        <label
+                          htmlFor="comments"
+                          className="font-medium text-gray-700"
+                        >
+                          {skill.name}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="col-span-12">
                 <label
                   htmlFor="about"

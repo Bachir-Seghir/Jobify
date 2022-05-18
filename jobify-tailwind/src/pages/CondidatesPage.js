@@ -4,6 +4,7 @@ import PageHeader from "../components/PageHeader";
 import LoadingSpinner from "../components/LoadingSpinner";
 import axios from "axios";
 import { API_URL } from "../utils/urls";
+import { Link } from "react-router-dom";
 
 function CondidatesPage() {
   const [condidates, setCondidates] = useState([]);
@@ -41,10 +42,14 @@ function CondidatesPage() {
       >
         {condidates.map((user) => (
           <li
-            key={user.id}
             className="col-span-1 flex flex-col text-center bg-white rounded-sm shadow divide-y divide-gray-200"
+            key={user.id}
           >
-            <div className="flex-1 flex flex-col p-8">
+            <Link
+              to={`/condidate/${user.id}`}
+              state={user.id}
+              className="flex-1 flex flex-col p-8"
+            >
               <img
                 className={`w-32 h-32 flex-shrink-0 mx-auto rounded-full`}
                 src={user.avatar}
@@ -62,7 +67,7 @@ function CondidatesPage() {
                 <dt className="sr-only">Title</dt>
                 <dd className="text-gray-500 text-sm">{user.title}</dd>
               </dl>
-            </div>
+            </Link>
             <div>
               <div className="-mt-px flex flex-col divide-y divide-gray-200">
                 <div className="flex-1 flex">
