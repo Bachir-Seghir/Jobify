@@ -4,7 +4,7 @@ import { UserContext } from "../contexts/userContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import axios from "axios";
 import { API_URL } from "../utils/urls";
-import { EyeIcon } from "@heroicons/react/solid";
+import { ChevronRightIcon, EyeIcon } from "@heroicons/react/solid";
 import SuccessFeedback from "./SuccessFeedback";
 import { Link } from "react-router-dom";
 import { levels, places, types } from "../utils/seedData";
@@ -14,6 +14,7 @@ const MyJobs = () => {
   // States
   const [jobs, setJobs] = useState(null);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [openApplicants, setOpenApplicants] = useState(false);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ show: false, message: "" });
 
@@ -56,6 +57,12 @@ const MyJobs = () => {
   const handleSelectJob = (id) => {
     const [job] = jobs.filter((job) => job.id === id);
     setSelectedJob(job);
+    setOpenApplicants(false);
+  };
+  const handleOpenApplicant = (id) => {
+    const [job] = jobs.filter((job) => job.id === id);
+    setSelectedJob(job);
+    setOpenApplicants(true);
   };
 
   const handleDeleteJob = (id) => {
@@ -80,7 +87,7 @@ const MyJobs = () => {
   };
   // useEffect Hooks
   useEffect(() => {
-    setJobs(user.jobs);
+    user && setJobs(user.postedJobs);
   }, [user]);
 
   // Returns
@@ -129,12 +136,16 @@ const MyJobs = () => {
               <div className="flex-1 px-4 py-2 text-sm truncate">
                 <a
                   href=""
-                  className="text-gray-900 font-medium hover:text-gray-600"
+                  className="text-gray-900 font-medium hover:text-gray-600 capitalize"
                 >
                   {job.title}
                 </a>
-                <p className="text-gray-500">
-                  {job.aplicants ? job.aplicants : 0} aplicants
+                <p
+                  onClick={() => handleOpenApplicant(job.id)}
+                  className="cursor-pointer hover:text-sky-500 text-gray-500"
+                >
+                  {job.applicants?.length ? job.applicants?.length : 0}{" "}
+                  aplicants
                 </p>
               </div>
               <div className="flex-shrink-0 pr-2">
@@ -151,7 +162,62 @@ const MyJobs = () => {
           </li>
         ))}
       </ul>
-      {selectedJob && (
+      {selectedJob && openApplicants && (
+        <div className="flow-root mt-6">
+          <h2 className="text-lg py-8 mt-6 leading-6 font-medium text-gray-900 capitalize">
+            {selectedJob.title} Applicants
+          </h2>
+          {selectedJob.applicants.length === 0 && (
+            <h4 className="text-sm leading-2 font-medium text-red-500">
+              No Applications yet !
+            </h4>
+          )}
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul role="list" className="divide-y divide-gray-200">
+              {selectedJob?.applicants.map((applicant) => (
+                <li key={applicant.email}>
+                  <Link
+                    to={`/condidate/${applicant.id}`}
+                    state={applicant.id}
+                    className="block hover:bg-gray-50"
+                  >
+                    <div className="flex items-center px-4 py-4 sm:px-6">
+                      <div className="min-w-0 flex-1 flex items-center">
+                        <div className="flex-shrink-0">
+                          <img
+                            className="h-12 w-12 rounded-full"
+                            src={applicant.avatar}
+                            alt=""
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
+                          <div>
+                            <p className="text-sm font-medium text-indigo-600 truncate">
+                              {applicant.fullname}
+                            </p>
+                            <p className="mt-2 flex items-center text-sm text-gray-500">
+                              <span className="capitalize text-bold">
+                                {applicant.title}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <ChevronRightIcon
+                          className="h-5 w-5 text-gray-400"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+      {selectedJob && !openApplicants && (
         <>
           <h2 className="text-lg mt-12 leading-6 font-medium text-gray-900">
             Edit Job
@@ -192,6 +258,7 @@ const MyJobs = () => {
                     value={selectedJob?.description || ""}
                     onChange={(e) => handleInputChange(e)}
                     type="text"
+                    rows={6}
                     name="description"
                     id="description"
                     autoComplete="description"

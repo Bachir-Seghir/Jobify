@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import {
   BriefcaseIcon,
-  CalendarIcon,
   CashIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ClockIcon,
   LocationMarkerIcon,
-  UsersIcon,
 } from "@heroicons/react/solid";
 import { format } from "timeago.js";
 import Pagination from "./Pagination";
 import axios from "axios";
 import { API_URL } from "../utils/urls";
 import LoadingSpinner from "./LoadingSpinner";
+import Slider from "./Slider";
 
 const borderColor = (type) => {
   switch (type) {
@@ -51,6 +50,9 @@ function JobsFeed() {
   const [pageCount, setPageCount] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [open, setOpen] = useState(false);
+  const [previewPost, setPreviewPost] = useState(null);
+
   useEffect(() => {
     setSkip(currentPage * perPage - perPage);
   }, [currentPage]);
@@ -87,6 +89,11 @@ function JobsFeed() {
     }
   };
 
+  const handlePostClick = (e, post) => {
+    setOpen(true);
+    setPreviewPost(post);
+  };
+
   // Returns
   if (loading)
     return (
@@ -97,41 +104,42 @@ function JobsFeed() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 py-12 px-16 xl:px-28">
+      <Slider open={open} setOpen={setOpen} post={previewPost} />
       <div className="order-2 lg:order-1 lg:col-span-2 flex flex-col py-6">
         <h3 className="text-2xl font-medium text-gray-900 text-left pb-8">
           Recent Jobs
         </h3>
         <div className="bg-white border border overflow-hidden rounded-md">
           <ul role="list" className="divide-y divide-gray-200">
-            {posts.slice(skip, skip + perPage).map((position) => (
-              <li key={position.id}>
-                <a
-                  href="#"
-                  className={`block hover:bg-gray-50 border-l-4 ${borderColor(
-                    position.type
+            {posts.slice(skip, skip + perPage).map((post) => (
+              <li key={post.id}>
+                <div
+                  onClick={(e) => handlePostClick(e, post)}
+                  className={`cursor-pointer block hover:bg-gray-50 border-l-4 ${borderColor(
+                    post.type
                   )}`}
                 >
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center">
                       <p className="text-sm font-medium text-zinc-900 truncate capitalize">
-                        {position.title}
+                        {post.title}
                       </p>
                       <div
                         className={`ml-2 py-1 flex-shrink-0 flex rounded-sm ${bgColor(
-                          position.type
+                          post.type
                         )}`}
                       >
                         <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-slate-700 capitalize">
-                          {position.experienceLevel}
+                          {post.experienceLevel}
                         </p>
                       </div>
                       <div
                         className={`ml-auto py-1 flex-shrink-0 flex rounded-sm ${bgColor(
-                          position.type
+                          post.type
                         )}`}
                       >
                         <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-slate-700 capitalize">
-                          {position.type}
+                          {post.type}
                         </p>
                       </div>
                     </div>
@@ -142,14 +150,14 @@ function JobsFeed() {
                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                             aria-hidden="true"
                           />
-                          ${position.minSalary} -- ${position.maxSalary}
+                          ${post.minSalary} -- ${post.maxSalary}
                         </p>
                         <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6 capitalize">
                           <LocationMarkerIcon
                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                             aria-hidden="true"
                           />
-                          {position.place} / {position.locations}
+                          {post.place} / {post.locations}
                         </p>
                       </div>
                       <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
@@ -159,14 +167,14 @@ function JobsFeed() {
                         />
                         <p>
                           Posted{" "}
-                          <time dateTime={position.created_at}>
-                            {format(position.created_at)}
+                          <time dateTime={post.created_at}>
+                            {format(post.created_at)}
                           </time>
                         </p>
                       </div>
                     </div>
                   </div>
-                </a>
+                </div>
               </li>
             ))}
           </ul>
