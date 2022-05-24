@@ -1,15 +1,15 @@
 import { Fragment, useEffect, useState } from "react";
 import { Transition } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/outline";
-import { XIcon } from "@heroicons/react/solid";
+import { ExclamationCircleIcon, XIcon } from "@heroicons/react/solid";
 
-const SuccessFeedback = ({ children, open }) => {
+const SuccessFeedback = ({ children, open, type }) => {
   const [show, setShow] = useState(false);
   useEffect(() => {
     setShow(open);
     setTimeout(() => {
       setShow(false);
-    }, 2000);
+    }, 3000);
   }, [open]);
   return (
     <div
@@ -32,13 +32,25 @@ const SuccessFeedback = ({ children, open }) => {
             <div className="p-4">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <CheckCircleIcon
-                    className="h-6 w-6 text-green-400"
-                    aria-hidden="true"
-                  />
+                  {type === "fail" && (
+                    <ExclamationCircleIcon
+                      className="h-6 w-6 text-red-500"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {type === "success" && (
+                    <CheckCircleIcon
+                      className="h-6 w-6 text-green-400"
+                      aria-hidden="true"
+                    />
+                  )}
                 </div>
                 <div className="ml-3 w-0 flex-1 pt-0.5">
-                  <p className="text-sm font-medium text-green-400">
+                  <p
+                    className={`text-sm font-medium ${
+                      type === "success" ? "text-green-400" : "text-red-500"
+                    }`}
+                  >
                     {children}
                   </p>
                 </div>

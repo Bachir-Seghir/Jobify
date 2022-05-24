@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   BriefcaseIcon,
   CashIcon,
@@ -13,6 +13,8 @@ import axios from "axios";
 import { API_URL } from "../utils/urls";
 import LoadingSpinner from "./LoadingSpinner";
 import Slider from "./Slider";
+import { UserContext } from "../contexts/userContext";
+import SuccessFeedback from "./SuccessFeedback";
 
 const borderColor = (type) => {
   switch (type) {
@@ -40,9 +42,16 @@ const bgColor = (type) => {
 };
 
 function JobsFeed() {
+  const { jwt } = useContext(UserContext);
+
   const perPage = process.env.REACT_APP_PERPAGE;
   const [currentPage, setCurrentPage] = useState(1);
   const [skip, setSkip] = useState(0);
+  const [feedback, setFeedback] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
 
   const [currentFeatIdx, setCurrentFeatIdx] = useState(0);
   const [featuredPos, setFeaturedPos] = useState([]);
@@ -94,6 +103,38 @@ function JobsFeed() {
     setPreviewPost(post);
   };
 
+  const handleApply = (id) => {
+    setLoading(true);
+    axios
+      .put(
+        `${API_URL}/jobs/apply/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      )
+      .then((res) => {
+        setLoading(false);
+        setFeedback((state) => ({
+          ...state,
+          show: true,
+          message: "Applied Successfully",
+          type: "success",
+        }));
+      })
+      .catch((error) => {
+        setLoading(false);
+        const { response } = error;
+        setFeedback((state) => ({
+          ...state,
+          show: true,
+          message: response.data.message,
+          type: "fail",
+        }));
+      });
+  };
   // Returns
   if (loading)
     return (
@@ -105,6 +146,11 @@ function JobsFeed() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8 py-12 px-16 xl:px-28">
       <Slider open={open} setOpen={setOpen} post={previewPost} />
+
+      <SuccessFeedback open={feedback.show} type={feedback.type}>
+        {feedback.message}
+      </SuccessFeedback>
+
       <div className="order-2 lg:order-1 lg:col-span-2 flex flex-col py-6">
         <h3 className="text-2xl font-medium text-gray-900 text-left pb-8">
           Recent Jobs
@@ -208,24 +254,27 @@ function JobsFeed() {
           </div>
         </div>
         <div className="w-max flex overflow-hidden h-[640px]">
-          {featuredPos.map((position, i) => (
+          {featuredPos.map((post, i) => (
             <div
-              key={i}
+              key={post.id}
               className={`${
                 currentFeatIdx === i ? "block" : "hidden"
-              }  bg-white border overflow-hidden rounded-md h-auto w-full absolute`}
+              }  cursor-pointer bg-white hover:bg-gray-50 border overflow-hidden rounded-md h-auto w-full absolute`}
             >
-              <div className="px-4 py-5 sm:px-6">
+              <div
+                className="px-4 py-5 sm:px-6"
+                onClick={(e) => handlePostClick(e, post)}
+              >
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  {position.title}
+                  {post.title}
                 </h3>
                 <div className="mt-2 flex-shrink-0 flex rounded-sm">
                   <p
                     className={` capitalize px-2 py-1 inline-flex text-xs leading-5 font-semibold text-slate-700 ${bgColor(
-                      position.type
+                      post.type
                     )}`}
                   >
-                    {position.type}
+                    {post.type}
                   </p>
                 </div>
               </div>
@@ -237,14 +286,14 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400 capitalize"
                         aria-hidden="true"
                       />
-                      {position.company.name}
+                      {post.company.name}
                     </p>
                     <p className="flex items-center text-sm text-gray-500 capitalize">
                       <LocationMarkerIcon
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      {position.place} / {position.locations}
+                      {post.place} / {post.locations}
                     </p>
                   </div>
                   <div className="py-4 flex gap-4">
@@ -253,7 +302,7 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      ${position.minSalary} -- ${position.maxSalary} / year
+                      ${post.minSalary} -- ${post.maxSalary} / year
                     </p>
                   </div>
                   <div className="py-4 flex gap-4">
@@ -262,7 +311,7 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      ${position.minHourlyPrice} / hour
+                      ${post.minHourlyPrice} / hour
                     </p>
                   </div>
                   <div className="py-4 flex gap-4">
@@ -271,25 +320,25 @@ function JobsFeed() {
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      ${position.maxHourlyPrice} / hour
+                      ${post.maxHourlyPrice} / hour
                     </p>
                     <p className="flex items-center text-sm text-gray-500">
                       <ClockIcon
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      {position.minHour}h / week
+                      {post.minHour}h / week
                     </p>
                   </div>
 
                   <div className="py-5">
                     <dd className="text-md text-gray-600 mt-0 line-clamp-6">
-                      <p>{position.description}</p>
+                      <p>{post.description}</p>
                     </dd>
                   </div>
                   <button
-                    type="submit"
-                    className="w-full items-center text-md font-semibold px-4 py-3 border border-transparent leading-4 rounded-sm text-white bg-green-500 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    onClick={() => handleApply(post.id)}
+                    className="w-full items-center text-md font-semibold px-4 py-3 border border-transparent leading-4 rounded-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none "
                   >
                     Apply For This Job
                   </button>

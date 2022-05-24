@@ -26,7 +26,7 @@ function CondidatesPage() {
   // Returns
   if (loading)
     return (
-      <div className="py-40">
+      <div className="w-screen h-screen py-40">
         <LoadingSpinner />
       </div>
     );

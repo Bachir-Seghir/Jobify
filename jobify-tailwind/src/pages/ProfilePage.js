@@ -2,9 +2,11 @@ import React, { useContext, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import {
   BellIcon,
+  BookmarkAltIcon,
   BriefcaseIcon,
   KeyIcon,
   OfficeBuildingIcon,
+  SaveAsIcon,
   UserCircleIcon,
 } from "@heroicons/react/outline";
 
@@ -16,6 +18,7 @@ import CreateCompany from "../components/CreateCompany";
 import PageNotFound from "../components/PageNotFound";
 import AddJob from "../components/AddJob";
 import MyJobs from "../components/MyJobs";
+import Applications from "../components/Applications";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -27,6 +30,8 @@ const subNavigation = [
   { name: "Create Company", icon: OfficeBuildingIcon, current: false },
   { name: "Add Job", icon: BriefcaseIcon, current: false },
   { name: "Posted Jobs", icon: BriefcaseIcon, current: false },
+  { name: "Applications", icon: SaveAsIcon, current: false },
+  { name: "Saved Jobs", icon: BookmarkAltIcon, current: false },
   { name: "Notifications", icon: BellIcon, current: false },
 ];
 export default function ProfilePage() {
@@ -110,6 +115,13 @@ export default function ProfilePage() {
                 <nav className="space-y-1">
                   {subNavigation.map((item) => {
                     if (
+                      user.accountType === "employer" &&
+                      (item.name === "Applications" ||
+                        item.name === "Saved Jobs")
+                    ) {
+                      return;
+                    }
+                    if (
                       user.accountType === "condidate" &&
                       (item.name === "Company" ||
                         item.name === "Create Company" ||
@@ -154,6 +166,7 @@ export default function ProfilePage() {
                 </nav>
               </aside>
               {section === "Profile" && <UpdateProfile />}
+              {section === "Applications" && <Applications />}
               {section === "Company" && <UpdateCompany />}
               {section === "Create Company" && <CreateCompany />}
               {section === "Add Job" && <AddJob />}

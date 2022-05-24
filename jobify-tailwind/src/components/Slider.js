@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   XIcon,
@@ -8,17 +8,77 @@ import {
   LocationMarkerIcon,
 } from "@heroicons/react/outline";
 import { TrendingUpIcon } from "@heroicons/react/solid";
+import axios from "axios";
+import { API_URL } from "../utils/urls";
+import { UserContext } from "../contexts/userContext";
+import SuccessFeedback from "./SuccessFeedback";
+import LoadingSpinner from "./LoadingSpinner";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Slider({ open, setOpen, post }) {
+export default function Slider({ open, setOpen, post, inProfile }) {
+  const { jwt } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
+
+  // This effect sets feedback state to default values on each toggle open
+  // because Slider component will not re-render each time open changes the value
+  useEffect(() => {
+    setFeedback((state) => ({
+      ...state,
+      show: false,
+      message: "",
+      type: "",
+    }));
+  }, [open]);
+
+  const handleApply = (id) => {
+    setLoading(true);
+    axios
+      .put(
+        `${API_URL}/jobs/apply/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      )
+      .then((res) => {
+        setLoading(false);
+        setFeedback((state) => ({
+          ...state,
+          show: true,
+          message: "Applied Successfully",
+          type: "success",
+        }));
+      })
+      .catch((error) => {
+        setLoading(false);
+        const { response } = error;
+        setFeedback((state) => ({
+          ...state,
+          show: true,
+          message: response.data.message,
+          type: "fail",
+        }));
+      });
+  };
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
         <div className="fixed inset-0" />
 
+        <SuccessFeedback open={feedback.show} type={feedback.type}>
+          {feedback.message}
+        </SuccessFeedback>
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
@@ -39,7 +99,7 @@ export default function Slider({ open, setOpen, post }) {
                           id="slide-over-heading"
                           className="text-lg font-medium text-gray-900"
                         >
-                          Post Description
+                          {inProfile ? "Applied for" : "Post Description"}
                         </h2>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -79,20 +139,24 @@ export default function Slider({ open, setOpen, post }) {
                                   <strong>@{post?.company?.name}</strong>
                                 </p>
                               </div>
-                              <div className="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
-                                <button
-                                  type="button"
-                                  className="inline-flex w-full flex-shrink-0 items-center justify-center rounded-md border border-transparent bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 sm:flex-1"
-                                >
-                                  Apply
-                                </button>
-                                <button
-                                  type="button"
-                                  className="inline-flex w-full flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                                >
-                                  Save
-                                </button>
-                              </div>
+                              {!inProfile && (
+                                <div className="mt-5 flex flex-wrap space-y-3 sm:space-y-0 sm:space-x-3">
+                                  <button
+                                    type="button"
+                                    disabled={loading}
+                                    onClick={() => handleApply(post.id)}
+                                    className="disabled:opacity-50 inline-flex w-full flex-shrink-0 items-center justify-center rounded-sm border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-600 focus:outline-none sm:flex-1"
+                                  >
+                                    Apply
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="inline-flex w-full flex-1 items-center justify-center rounded-sm border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -180,7 +244,7 @@ export default function Slider({ open, setOpen, post }) {
                                   className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                                   aria-hidden="true"
                                 />
-                                {post?.applicants.length}
+                                {post?.applicants?.length}
                               </p>
                             </dd>
                           </div>
