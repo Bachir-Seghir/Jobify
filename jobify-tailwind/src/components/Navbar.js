@@ -1,6 +1,6 @@
 import { Fragment, useContext } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/userContext";
 import { CheckIcon } from "@heroicons/react/solid";
@@ -16,6 +16,10 @@ const menuLinks = [
   //{ name: "Blog", path: "/blog" },
   //{ name: "Contact", path: "/contact" },
 ];
+const checkNewNotif = (arr) => {
+  return arr.some((item) => !item.read);
+};
+
 export default function Navbar() {
   const { user, setIsAuth, setJwt } = useContext(UserContext);
   const location = useLocation();
@@ -115,6 +119,24 @@ export default function Navbar() {
                             </span>
                           )}
                         </h4>
+                        {checkNewNotif(user.notifications) ? (
+                          <Link
+                            to={`/user/${user.username}`}
+                            state={"Notifications"}
+                            className="relative"
+                          >
+                            <BellIcon className="animate-ping h-5 w-5 text-red-400 absolute" />
+                            <BellIcon className="h-5 w-5 text-red-500 relative" />
+                          </Link>
+                        ) : (
+                          <Link
+                            to={`/user/${user.username}`}
+                            state={"Notifications"}
+                            className="relative"
+                          >
+                            <BellIcon className="h-5 w-5 text-sky-500 relative" />
+                          </Link>
+                        )}
                       </Menu.Button>
                     </div>
                   ) : (

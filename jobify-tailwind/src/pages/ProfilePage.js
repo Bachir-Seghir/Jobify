@@ -19,6 +19,9 @@ import PageNotFound from "../components/PageNotFound";
 import AddJob from "../components/AddJob";
 import MyJobs from "../components/MyJobs";
 import Applications from "../components/Applications";
+import SavedJobs from "../components/SavedJobs";
+import { Notifications } from "../components/Notifications";
+import { useLocation } from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -34,9 +37,14 @@ const subNavigation = [
   { name: "Saved Jobs", icon: BookmarkAltIcon, current: false },
   { name: "Notifications", icon: BellIcon, current: false },
 ];
+const checkNewNotif = (arr) => {
+  return arr.some((item) => !item.read);
+};
 export default function ProfilePage() {
+  const location = useLocation();
+  const defaultSection = location.state;
   const { user } = useContext(UserContext);
-  const [section, setSection] = useState("");
+  const [section, setSection] = useState(defaultSection || "");
 
   const handleNavigation = (e, item) => {
     e.preventDefault();
@@ -146,7 +154,7 @@ export default function ProfilePage() {
                           item.current
                             ? "bg-sky-50 border-sky-500 text-sky-700 hover:bg-sky-50 hover:text-sky-700"
                             : "border-transparent text-gray-900 hover:bg-gray-50 hover:text-gray-900",
-                          "group border-l-4 px-3 py-2 flex items-center text-sm font-medium w-full"
+                          "group border-l-4 px-3 py-2 flex items-center text-sm font-medium w-full relative"
                         )}
                         aria-current={item.current ? "page" : undefined}
                       >
@@ -160,6 +168,13 @@ export default function ProfilePage() {
                           aria-hidden="true"
                         />
                         <span className="truncate">{item.name}</span>
+                        {item.name === "Notifications" &&
+                          checkNewNotif(user.notifications) && (
+                            <span className=" h-3 w-3 absolute right-2 top-3">
+                              <span className="left-0 top-0.5 animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-300 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-400"></span>
+                            </span>
+                          )}
                       </button>
                     );
                   })}
@@ -167,6 +182,7 @@ export default function ProfilePage() {
               </aside>
               {section === "Profile" && <UpdateProfile />}
               {section === "Applications" && <Applications />}
+              {section === "Saved Jobs" && <SavedJobs />}
               {section === "Company" && <UpdateCompany />}
               {section === "Create Company" && <CreateCompany />}
               {section === "Add Job" && <AddJob />}
@@ -180,15 +196,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-const Notifications = () => {
-  return (
-    <div className="py-6 px-4 sm:p-6 lg:pb-8">
-      <div>
-        <h2 className="text-lg leading-6 font-medium text-gray-900">
-          Notifications
-        </h2>
-      </div>
-    </div>
-  );
-};

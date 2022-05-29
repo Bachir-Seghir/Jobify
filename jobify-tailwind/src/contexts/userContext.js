@@ -38,6 +38,15 @@ const UserProvider = ({ children }) => {
     }
   }, [isAuth]);
 
+  // Refetch auery each 500 ms
+  /* useEffect(() => {
+    const interval = setInterval(() => {
+      jwt && me();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [jwt]); */
+
   return (
     <UserContext.Provider
       value={{ user, setUser, isAuth, setIsAuth, jwt, setJwt, me }}

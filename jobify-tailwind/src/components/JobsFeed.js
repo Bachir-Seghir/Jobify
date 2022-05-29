@@ -259,10 +259,10 @@ function JobsFeed() {
               key={post.id}
               className={`${
                 currentFeatIdx === i ? "block" : "hidden"
-              }  cursor-pointer bg-white hover:bg-gray-50 border overflow-hidden rounded-md h-auto w-full absolute`}
+              }   bg-white border overflow-hidden rounded-md h-auto w-full absolute`}
             >
               <div
-                className="px-4 py-5 sm:px-6"
+                className="px-4 py-5 sm:px-6 cursor-pointer hover:bg-gray-50"
                 onClick={(e) => handlePostClick(e, post)}
               >
                 <h3 className="text-lg leading-6 font-medium text-gray-900">

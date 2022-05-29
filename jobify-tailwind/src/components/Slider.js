@@ -19,8 +19,9 @@ function classNames(...classes) {
 }
 
 export default function Slider({ open, setOpen, post, inProfile }) {
-  const { jwt } = useContext(UserContext);
+  const { user, jwt, me } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+  const [savedJobs, setSavedJobs] = useState([]);
   const [feedback, setFeedback] = useState({
     show: false,
     message: "",
@@ -37,6 +38,10 @@ export default function Slider({ open, setOpen, post, inProfile }) {
       type: "",
     }));
   }, [open]);
+
+  useEffect(() => {
+    user && setSavedJobs(user.saved_jobs);
+  }, [user]);
 
   const handleApply = (id) => {
     setLoading(true);
@@ -58,6 +63,7 @@ export default function Slider({ open, setOpen, post, inProfile }) {
           message: "Applied Successfully",
           type: "success",
         }));
+        me();
       })
       .catch((error) => {
         setLoading(false);
@@ -69,6 +75,37 @@ export default function Slider({ open, setOpen, post, inProfile }) {
           type: "fail",
         }));
       });
+  };
+  const handleSave = async (post) => {
+    const [existedPost] = savedJobs.filter((item) => item.id === post.id);
+    if (!existedPost) {
+      setSavedJobs((state) => [...state, post]);
+      axios
+        .put(
+          `${API_URL}/users/me`,
+          {
+            saved_jobs: [...savedJobs, post],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          setFeedback((state) => ({
+            ...state,
+            show: true,
+            message: "Post Saved",
+            type: "success",
+          }));
+          me();
+        })
+        .catch((error) => {
+          setLoading(false);
+        });
+    }
   };
 
   return (
@@ -151,7 +188,9 @@ export default function Slider({ open, setOpen, post, inProfile }) {
                                   </button>
                                   <button
                                     type="button"
-                                    className="inline-flex w-full flex-1 items-center justify-center rounded-sm border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                    disabled={loading}
+                                    onClick={() => handleSave(post)}
+                                    className="disabled:opacity-25 inline-flex w-full flex-1 items-center justify-center rounded-sm border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                   >
                                     Save
                                   </button>

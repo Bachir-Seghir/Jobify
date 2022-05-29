@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import {
   BriefcaseIcon,
   LocationMarkerIcon,
@@ -9,6 +9,8 @@ import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { API_URL } from "../utils/urls";
 import { format } from "timeago.js";
+import { UserContext } from "../contexts/userContext";
+import HireModal from "../components/HireModal";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -23,24 +25,27 @@ const calcTotalRate = (rate) => {
 };
 
 function Condidate() {
+  const [open, setOpen] = useState(false);
+
   const location = useLocation();
   const userId = location.state;
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [condidate, setCondidate] = useState(null);
   const [rating, setRating] = useState(0);
-  useEffect(() => {
-    user && setRating(Math.round(calcTotalRate(user.rate)));
-  }, [user]);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    condidate && setRating(Math.round(calcTotalRate(condidate.rate)));
+  }, [condidate]);
+
+  useEffect(() => {
+    const fetchCondidate = async () => {
       setLoading(true);
       axios.get(`${API_URL}/users/${userId}`).then((res) => {
-        setUser(res.data);
+        setCondidate(res.data);
         setLoading(false);
       });
     };
-    userId && fetchUser();
+    userId && fetchCondidate();
   }, [userId]);
 
   // Returns
@@ -53,6 +58,7 @@ function Condidate() {
 
   return (
     <main className="py-32">
+      <HireModal condidate={condidate} open={open} setOpen={setOpen} />
       {/* Page header */}
       <div className=" px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:px-16 ">
         <div className="flex items-center w-full">
@@ -60,26 +66,26 @@ function Condidate() {
             <div className="relative">
               <img
                 className="h-32 w-32 rounded-full"
-                src={user?.avatar}
+                src={condidate?.avatar}
                 alt=""
               />
               <div
                 className={`border-2 border-white top-[100px] left-[100px] h-5 w-5 absolute inset-0 shadow-inner rounded-full 
-                ${user?.available ? "bg-green-400" : "bg-red-500"}`}
+                ${condidate?.available ? "bg-green-400" : "bg-red-500"}`}
                 aria-hidden="true"
               />
             </div>
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 ml-8">
-              {user?.fullname}
+              {condidate?.fullname}
             </h1>
             <p className="flex items-center text-sm font-medium text-gray-500 ml-8 mt-2 capitalize">
               <BriefcaseIcon className="h-4 w-4 mr-2" />
-              {user?.title}
+              {condidate?.title}
               <span className="flex items-center text-sm font-medium text-gray-500 ml-4 capitalize">
                 <LocationMarkerIcon className="h-4 w-4 mr-2" />
-                {user?.country}
+                {condidate?.country}
               </span>
             </p>
             <div className="ml-8 mt-4 flex items-center">
@@ -97,6 +103,7 @@ function Condidate() {
           </div>
           <button
             type="button"
+            onClick={() => setOpen(true)}
             className="ml-auto px-8 py-2 border border-transparent text-md font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none "
           >
             Hire
@@ -121,10 +128,10 @@ function Condidate() {
                 <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                   <div className="sm:col-span-1">
                     <dt className="text-sm font-medium text-gray-500">
-                      Application for
+                      Search to Apply For
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      Backend Developer
+                      {condidate?.title}
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
@@ -132,7 +139,7 @@ function Condidate() {
                       Email address
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {user?.email}
+                      {condidate?.email}
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
@@ -140,13 +147,13 @@ function Condidate() {
                       Salary expectation
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      ${user?.salary}
+                      ${condidate?.salary}
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
                     <dt className="text-sm font-medium text-gray-500">Phone</dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {user?.phone}
+                      {condidate?.phone}
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
@@ -154,7 +161,7 @@ function Condidate() {
                       Birthday
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {user?.birthday}
+                      {condidate?.birthday}
                     </dd>
                   </div>
                   <div className="sm:col-span-1">
@@ -162,13 +169,13 @@ function Condidate() {
                       Website
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {user?.website}
+                      {condidate?.website}
                     </dd>
                   </div>
                   <div className="sm:col-span-2">
                     <dt className="text-sm font-medium text-gray-500">About</dt>
                     <dd className="mt-1 text-sm text-gray-900">
-                      {user?.about}
+                      {condidate?.about}
                     </dd>
                   </div>
                 </dl>
@@ -188,7 +195,7 @@ function Condidate() {
             {/* Skills */}
             <div className="mt-6 flow-root">
               <span className="mr-0.5">
-                {user?.skills?.map((skill) => (
+                {condidate?.skills?.map((skill) => (
                   <Fragment key={skill.id}>
                     <a
                       href={skill.href}
@@ -215,7 +222,7 @@ function Condidate() {
                 Completed Projects
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                {user?.workstate?.completedProject || 0}
+                {condidate?.workstate?.completedProject || 0}
               </dd>
             </div>
             <div className="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
@@ -223,7 +230,7 @@ function Condidate() {
                 Applies
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                {user?.workstate?.applies || 0}
+                {condidate?.workstate?.applies || 0}
               </dd>
             </div>
             <div className="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
@@ -231,7 +238,7 @@ function Condidate() {
                 Accepted Interveiews
               </dt>
               <dd className="mt-1 text-3xl font-semibold text-gray-900">
-                {user?.workstate?.acceptedInterview || 0}
+                {condidate?.workstate?.acceptedInterview || 0}
               </dd>
             </div>
           </dl>

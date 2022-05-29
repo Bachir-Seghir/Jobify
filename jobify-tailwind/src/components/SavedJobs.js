@@ -39,26 +39,23 @@ const bgColor = (type) => {
   }
 };
 
-const Applications = () => {
+const SavedJobs = () => {
   const { user, jwt, me } = useContext(UserContext);
 
-  const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(false);
-
-  const [applications, setApplications] = useState([]);
+  const [savedJobs, setSavedJobs] = useState([]);
   const [open, setOpen] = useState(false);
   const [previewPost, setPreviewPost] = useState(null);
 
   useEffect(() => {
-    user && setApplications(user.job_applieds);
+    user && setSavedJobs(user.saved_jobs);
   }, [user]);
 
-  const handleDeleteApp = async (id) => {
+  const handleDeletePost = async (id) => {
     axios
       .put(
         `${API_URL}/users/me`,
         {
-          job_applieds: [...applications.filter((item) => item.id !== id)],
+          saved_jobs: [...savedJobs.filter((item) => item.id !== id)],
         },
         {
           headers: {
@@ -67,7 +64,7 @@ const Applications = () => {
         }
       )
       .then((res) => {
-        setApplications(res.data.job_applieds);
+        setSavedJobs(res.data.saved_jobs);
       });
   };
 
@@ -76,36 +73,28 @@ const Applications = () => {
     setPreviewPost(post);
   };
 
-  if (loading)
-    return (
-      <div className="py-6 px-4 sm:p-6 lg:pb-8 col-span-9">
-        <LoadingSpinner />
-      </div>
-    );
-
   return (
     <div className="lg:col-span-9 flex flex-col">
       {/* Profile section */}
-      <SuccessFeedback open={show}>Updated Succssfully !</SuccessFeedback>
       <Slider
         open={open}
         setOpen={setOpen}
         post={previewPost}
-        inProfile={true}
+        inProfile={false}
       />
 
       <div className="grid grid-cols-4 gap-y-4 py-6 px-4 sm:p-6 lg:pb-8">
         <h2 className="col-span-4 text-lg leading-6 font-medium text-gray-900">
-          My Applications
+          Saved Posts
         </h2>
         <div className="col-span-3 bg-white border border overflow-hidden rounded-md">
-          {!applications.length && (
+          {!savedJobs.length && (
             <h2 className="p-4 col-span-4 text-sm leading-6 font-medium text-yellow-500">
               You didn't applied yet !
             </h2>
           )}
           <ul role="list" className="divide-y divide-gray-200">
-            {applications.map((post) => (
+            {savedJobs.map((post) => (
               <li key={post.id}>
                 <div
                   className={`relative  block hover:bg-gray-50 border-l-4 ${borderColor(
@@ -114,7 +103,7 @@ const Applications = () => {
                 >
                   <TrashIcon
                     className="w-4 h-4 text-red-500 absolute right-1 bottom-5 z-index-100 cursor-pointer hover:text-red-700"
-                    onClick={() => handleDeleteApp(post.id)}
+                    onClick={() => handleDeletePost(post.id)}
                   />
                   <div className="pl-4 pr-6 py-4 sm:pl-6 sm:pr-8">
                     <div
@@ -184,4 +173,4 @@ const Applications = () => {
   );
 };
 
-export default Applications;
+export default SavedJobs;
